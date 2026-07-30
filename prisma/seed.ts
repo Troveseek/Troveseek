@@ -11,9 +11,9 @@ async function main() {
 }
 
 main()
-  .then(async () => { await prisma.$disconnect(); })
+  .then(async () => { await db.$disconnect(); })
   .catch(async (e) => {
     console.error(e);
-    await prisma.$disconnect();
+    await db.$disconnect();
     process.exit(1);
   });
