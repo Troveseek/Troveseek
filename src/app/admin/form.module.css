@@ -1,0 +1,275 @@
+/* ============================================================
+   Admin Form — Shared styles, fully theme-aware
+   All colors use CSS variables — zero hardcoded values.
+   ============================================================ */
+
+.formPage {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--clr-text);
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: var(--clr-text-muted);
+}
+
+.formLayout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.mainCol {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.sideCol {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 24px;
+  min-width: 240px;
+}
+
+/* ── Card ─────────────────────────────── */
+.card {
+  background: var(--clr-surface-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-border);
+  padding: 24px;
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--clr-text);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Form Elements ────────────────────── */
+.formGroup {
+  margin-bottom: 18px;
+}
+
+.formLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-surface-3);
+  color: var(--clr-text);
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder {
+  color: var(--clr-text-dim);
+}
+
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px var(--clr-primary-dim);
+  background: var(--clr-surface-2);
+}
+
+.formTextarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.formSelect {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238888aa' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ── Tabs ─────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid var(--clr-border);
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color var(--transition), border-color var(--transition);
+  font-family: var(--font-body);
+}
+
+.tab.active {
+  color: var(--clr-primary);
+  border-bottom-color: var(--clr-primary);
+}
+
+.tab:hover:not(.active) {
+  color: var(--clr-text);
+}
+
+/* ── Upload Zone ──────────────────────── */
+.uploadZone {
+  border: 2px dashed var(--clr-border);
+  border-radius: var(--radius-md);
+  padding: 40px;
+  text-align: center;
+  background: var(--clr-surface-3);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.uploadZone:hover {
+  border-color: var(--clr-primary);
+  background: var(--clr-primary-dim);
+}
+
+.uploadIcon {
+  color: var(--clr-text-muted);
+  margin-bottom: 12px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.uploadText {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--clr-text);
+}
+
+.uploadSubtext {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+}
+
+/* ── Toggle Row ───────────────────────── */
+.toggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.toggleRow:last-of-type {
+  border-bottom: none;
+}
+
+.toggleLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--clr-text);
+}
+
+.toggleSwitch {
+  width: 44px;
+  height: 24px;
+  background: var(--clr-surface-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-pill);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.toggleSwitch.active {
+  background: var(--clr-primary);
+  border-color: var(--clr-primary);
+}
+
+.toggleThumb {
+  width: 18px;
+  height: 18px;
+  background: var(--clr-text);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left var(--transition);
+  box-shadow: var(--shadow-card);
+}
+
+.toggleSwitch.active .toggleThumb {
+  left: 22px;
+  background: #fff;
+}
+
+/* ── Responsive ───────────────────────── */
+@media (max-width: 1024px) {
+  .formLayout {
+    flex-direction: column;
+  }
+  .sideCol {
+    width: 100%;
+    position: static;
+    min-width: unset;
+  }
+  .twoCols {
+    grid-template-columns: 1fr;
+  }
+}

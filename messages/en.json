@@ -1,0 +1,11 @@
+{
+  "Common": {
+    "Home": "Home",
+    "About": "About",
+    "Contact": "Contact",
+    "Products": "Products",
+    "Services": "Services",
+    "SaaS": "SaaS",
+    "Blog": "Blog"
+  }
+}

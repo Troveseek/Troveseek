@@ -1,0 +1,18 @@
+.toggleBtn {
+  background: none;
+  border: none;
+  color: var(--clr-text-muted);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.toggleBtn:hover {
+  background: var(--clr-surface-2);
+  color: var(--clr-primary);
+}

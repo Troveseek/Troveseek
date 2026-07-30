@@ -1,0 +1,486 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String?        @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          String         @default("GUEST")
+  department    String?
+  isActive          Boolean        @default(true)
+  notifyEmailOrders Boolean        @default(true)
+  notifyMarketing   Boolean        @default(false)
+  notifySecurity    Boolean        @default(true)
+  stripeCustomerId  String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  accounts      Account[]
+  auditLogs     AuditLog[]
+  chatSessions  ChatSession[]
+  notifications Notification[]
+  orders        Order[]
+  reviews       Review[]
+  sessions      Session[]
+  subscriptions Subscription[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Category {
+  id            String    @id @default(cuid())
+  name          String
+  nameAr        String?
+  slug          String    @unique
+  description   String?
+  descriptionAr String?
+  products      Product[]
+  saas          SaaS[]
+  services      Service[]
+}
+
+model Product {
+  id                String      @id @default(cuid())
+  logo              String?
+  name              String
+  nameAr            String?
+  slug              String      @unique
+  description       String
+  descriptionAr     String?
+  fullDescription   String?
+  fullDescriptionAr String?
+  price             Float
+  salePrice         Float?
+  bulkPricing       String?     @default("[]")
+  currency          String      @default("USD")
+  stock             Int         @default(0)
+  status            String      @default("DRAFT")
+  images            String      @default("[]")
+  tags              String      @default("[]")
+  faqs              String      @default("[]")
+  faqsAr            String?     @default("[]")
+  features          String      @default("[]")
+  featuresAr        String?     @default("[]")
+  specifications    String      @default("[]")
+  specificationsAr  String?     @default("[]")
+  requirements      String      @default("[]")
+  requirementsAr    String?     @default("[]")
+  metaTitle         String?
+  metaTitleAr       String?
+  metaDescription   String?
+  metaDescriptionAr String?
+  fileUrl           String?
+  categoryId        String?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  orderItems        OrderItem[]
+  category          Category?   @relation(fields: [categoryId], references: [id])
+  reviews           Review[]
+}
+
+model Review {
+  id         String    @id @default(cuid())
+  rating     Int
+  comment    String
+  authorName String
+  isApproved Boolean   @default(false)
+  productId  String?
+  saasId     String?
+  blogPostId String?
+  userId     String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User?     @relation(fields: [userId], references: [id])
+  blogPost   BlogPost? @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  saas       SaaS?     @relation(fields: [saasId], references: [id], onDelete: Cascade)
+  product    Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model SaaS {
+  id                String    @id @default(cuid())
+  logo              String?
+  name              String
+  nameAr            String?
+  slug              String    @unique
+  tagline           String?
+  taglineAr         String?
+  description       String
+  descriptionAr     String?
+  demoUrl           String?
+  platform          String?   @default("Web App")
+  hasFreeTrial      Boolean   @default(false)
+  monthlyPrice      Float
+  yearlyPrice       Float
+  features          String    @default("[]")
+  featuresAr        String?   @default("[]")
+  plans             String    @default("[]")
+  plansAr           String?   @default("[]")
+  status            String    @default("ACTIVE")
+  images            String    @default("[]")
+  whyChooseUs       String    @default("[]")
+  whyChooseUsAr     String?   @default("[]")
+  faqs              String    @default("[]")
+  faqsAr            String?   @default("[]")
+  documentationUrl  String?
+  communityUrl      String?
+  githubUrl         String?
+  metaTitle         String?
+  metaTitleAr       String?
+  metaDescription   String?
+  metaDescriptionAr String?
+  categoryId        String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  reviews           Review[]
+  subscriptions     Subscription[]
+  category          Category? @relation(fields: [categoryId], references: [id])
+}
+
+model Service {
+  id                String     @id @default(cuid())
+  logo              String?
+  name              String
+  nameAr            String?
+  slug              String     @unique
+  description       String
+  descriptionAr     String?
+  basePrice         Float
+  estimatedDays     Int
+  status            String     @default("ACTIVE")
+  tagline           String?
+  taglineAr         String?
+  images            String     @default("[]")
+  process           String     @default("[]")
+  processAr         String?    @default("[]")
+  portfolio         String     @default("[]")
+  portfolioAr       String?    @default("[]")
+  testimonials      String     @default("[]")
+  testimonialsAr    String?    @default("[]")
+  tiers             String     @default("[]")
+  tiersAr           String?    @default("[]")
+  features          String     @default("[]")
+  featuresAr        String?    @default("[]")
+  contactEmail      String?
+  contactPhone      String?
+  metaTitle         String?
+  metaTitleAr       String?
+  metaDescription   String?
+  metaDescriptionAr String?
+  categoryId        String?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  category          Category?  @relation(fields: [categoryId], references: [id])
+  techSpecs         TechSpec[]
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  orderNumber    String      @unique
+  userId         String
+  status         String      @default("PENDING")
+  totalAmount    Float
+  currency       String      @default("USD")
+  paymentIntent  String?
+  paymentStatus  String      @default("UNPAID")
+  paymentMethod  String      @default("card")
+  transactionId  String?
+  billingInfo    String?     // Stored as JSON string
+  receiptUrl     String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  trackingNumber String?
+  invoice        Invoice?
+  user           User        @relation(fields: [userId], references: [id])
+  items          OrderItem[]
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  productId  String?
+  itemName   String
+  quantity   Int
+  unitPrice  Float
+  totalPrice Float
+  product    Product? @relation(fields: [productId], references: [id])
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id         String   @id @default(cuid())
+  invoiceNum String   @unique
+  orderId    String   @unique
+  pdfUrl     String?
+  issuedAt   DateTime @default(now())
+  dueDate    DateTime
+  status     String   @default("DRAFT")
+  order      Order    @relation(fields: [orderId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String
+  resource   String
+  resourceId String?
+  details    String
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TeamMember {
+  id           String   @id @default(cuid())
+  name         String
+  nameAr       String?
+  role         String
+  roleAr       String?
+  bio          String?
+  bioAr        String?
+  imageUrl     String?
+  email        String?
+  website      String?
+  linkedIn     String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model PageHero {
+  id         String   @id @default(cuid())
+  page       String
+  label      String?
+  labelAr    String?
+  title      String
+  titleAr    String?
+  subtitle   String?
+  subtitleAr String?
+  buttons    String   @default("[]")
+  buttonsAr  String?  @default("[]")
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model BlogPost {
+  id                String    @id @default(cuid())
+  title             String
+  titleAr           String?
+  slug              String    @unique
+  slugAr            String?
+  excerpt           String?
+  excerptAr         String?
+  content           String?
+  contentAr         String?
+  coverImage        String?
+  authorName        String?
+  authorNameAr      String?
+  authorImage       String?
+  category          String?
+  categoryAr        String?
+  readTime          String?
+  readTimeAr        String?
+  status            String    @default("DRAFT")
+  publishedAt       DateTime?
+  tags              String    @default("[]")
+  tagsAr            String?   @default("[]")
+  chapters          String    @default("[]")
+  metaTitle         String?
+  metaTitleAr       String?
+  metaDescription   String?
+  metaDescriptionAr String?
+  avgRating         Float?
+  reviewCount       Int       @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  reviews           Review[]
+}
+
+model GalleryImage {
+  id           String   @id @default(cuid())
+  title        String?
+  titleAr      String?
+  imageUrl     String
+  caption      String?
+  captionAr    String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  quote     String
+  quoteAr   String?
+  name      String
+  nameAr    String?
+  role      String?
+  roleAr    String?
+  avatarUrl String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ChatSession {
+  id        String        @id @default(cuid())
+  userId    String
+  subject   String?
+  status    String        @default("OPEN")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id         String      @id @default(cuid())
+  sessionId  String
+  senderId   String?
+  senderRole String      @default("CLIENT")
+  content    String
+  isRead     Boolean     @default(false)
+  createdAt  DateTime    @default(now())
+  session    ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model OfficeLocation {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  latitude  Float
+  longitude Float
+  phone     String?
+  email     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TechSpec {
+  id               String    @id @default(cuid())
+  specNumber       String    @unique
+  title            String
+  status           String    @default("DRAFT")
+  clientName       String
+  clientEmail      String
+  sections         String    @default("[]")
+  totalPrice       Float?
+  currency         String    @default("USD")
+  validUntil       DateTime?
+  notes            String?
+  signatureToken   String    @unique
+  signedAt         DateTime?
+  signatureData    String?
+  signerName       String?
+  signerIp         String?
+  viewedAt         DateTime?
+  declinedAt       DateTime?
+  declineReason    String?
+  serviceId        String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  companySignature String?
+  companySignedAt  DateTime?
+  service          Service?         @relation(fields: [serviceId], references: [id])
+  payments         ServicePayment[]
+}
+
+model ServicePayment {
+  id            String   @id @default(cuid())
+  techSpecId    String
+  title         String
+  amount        Float
+  currency      String   @default("USD")
+  status        String   @default("UNPAID")
+  paymentMethod String?
+  transactionId String?
+  receiptUrl    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  techSpec      TechSpec @relation(fields: [techSpecId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String
+  saasId               String
+  status               String    @default("ACTIVE") // ACTIVE, CANCELED, PAST_DUE
+  planName             String    // 'Basic', 'Pro', 'Enterprise'
+  billingCycle         String    // 'monthly' | 'yearly'
+  price                Float
+  currency             String    @default("USD")
+  paymentMethod        String    @default("stripe")
+  transactionId        String?
+  receiptUrl           String?
+  stripeSubscriptionId String?   @unique
+  currentPeriodStart   DateTime  @default(now())
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean   @default(false)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  saas                 SaaS      @relation(fields: [saasId], references: [id], onDelete: Cascade)
+}
