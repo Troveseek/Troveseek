@@ -4,13 +4,7 @@
  * Empty for clean initialization.
  */
 
-import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
-import path from 'path';
-
-const dbUrl = process.env.DATABASE_URL ?? `file:${path.join(__dirname, 'dev.db')}`;
-const adapter = new PrismaLibSql({ url: dbUrl });
-const prisma = new PrismaClient({ adapter } as any);
+import db from '../src/lib/db';
 
 async function main() {
   console.log('🌱 Database is intentionally left completely empty.');

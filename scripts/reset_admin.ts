@@ -1,26 +1,20 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaLibSql } from '@prisma/adapter-libsql';
-import path from 'path';
+import db from '../src/lib/db';
 import bcrypt from 'bcryptjs';
-
-const dbUrl = process.env.DATABASE_URL ?? `file:${path.join(__dirname, '../dev.db')}`;
-const adapter = new PrismaLibSql({ url: dbUrl });
-const prisma = new PrismaClient({ adapter } as any);
 
 async function main() {
   const hash = await bcrypt.hash('admin123', 10);
-  let admin = await prisma.user.findFirst({
+  let admin = await db.user.findFirst({
     where: { role: 'SUPER_ADMIN' }
   });
   if (admin) {
-    await prisma.user.update({
+    await db.user.update({
       where: { id: admin.id },
       data: { passwordHash: hash }
     });
     console.log(`Admin email: ${admin.email}`);
     console.log(`Admin password: admin123`);
   } else {
-    admin = await prisma.user.create({
+    admin = await db.user.create({
       data: {
         email: 'admin@troveseek.com',
         name: 'Admin',
@@ -34,4 +28,4 @@ async function main() {
   }
 }
 
-main().catch(console.error).finally(() => prisma.$disconnect());
+main().catch(console.error).finally(() => db.$disconnect());
