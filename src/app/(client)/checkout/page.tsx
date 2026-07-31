@@ -30,6 +30,17 @@ export default function CheckoutPage() {
 
   React.useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('success') === 'true') {
+        clearCart();
+        setSuccess(true);
+        setTimeout(() => router.push('/profile'), 3000);
+      }
+      if (params.get('canceled') === 'true') {
+        setError(isAr ? 'تم إلغاء عملية الدفع.' : 'Payment was canceled.');
+      }
+    }
     fetch('/api/settings?keys=pay_stripe_enabled,pay_baridi_enabled,pay_crypto_enabled,pay_baridi_name,pay_baridi_rip,pay_crypto_usdt,pay_crypto_binance')
       .then(res => res.json())
       .then(data => {
@@ -39,7 +50,7 @@ export default function CheckoutPage() {
         else if (data.pay_crypto_enabled === 'true') setPaymentMethod('crypto');
       })
       .catch(console.error);
-  }, []);
+  }, [clearCart, isAr, router]);
 
   const [billing, setBilling] = useState({
     firstName: '',
@@ -120,15 +131,21 @@ export default function CheckoutPage() {
           })),
           totalAmount: total(),
           paymentMethod,
-          transactionId: paymentMethod === 'card' ? 'mock_stripe_' + Math.random().toString(36).substr(2, 9) : transactionId,
+          transactionId: transactionId,
           receiptUrl: finalReceiptUrl,
           billingInfo: billing,
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || (isAr ? 'فشل إنشاء الطلب' : 'Failed to create order'));
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+        return;
       }
 
       clearCart();

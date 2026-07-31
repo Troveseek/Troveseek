@@ -27,7 +27,7 @@ export async function FeaturedProducts() {
   if (products.length === 0) return null; // Hide if empty
 
   return (
-    <section style={{ padding: '96px 32px', background: 'var(--clr-bg)' }}>
+    <section className="section-padding" style={{ background: 'var(--clr-bg)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px', flexWrap: 'wrap', gap: '16px' }}>
@@ -42,7 +42,7 @@ export async function FeaturedProducts() {
           </Link>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '24px' }}>
           {products.map((product) => (
             <Link key={product.id} href={`/shop/${product.slug}`} style={{ textDecoration: 'none' }}>
               <Card isInteractive style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>

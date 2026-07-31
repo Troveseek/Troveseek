@@ -145,9 +145,9 @@ export default function SaasPage() {
       </div>
 
       {/* Filter Bar */}
-      <div style={{ background: 'var(--clr-surface)', borderBottom: '1px solid var(--clr-border)', padding: '16px 32px', position: 'sticky', top: '72px', zIndex: 10 }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--clr-surface-2)', border: '1px solid var(--clr-border)', borderRadius: '999px', padding: '10px 16px', flex: '1 1 280px', maxWidth: '340px' }}>
+      <div style={{ borderBottom: '1px solid var(--clr-border)', background: 'var(--clr-surface)', position: 'sticky', top: '72px', zIndex: 40 }}>
+        <div className="section-padding" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', paddingTop: '24px', paddingBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--clr-surface-2)', border: '1px solid var(--clr-border)', borderRadius: '999px', padding: '10px 16px', flex: '1 1 280px' }}>
             <Search size={16} color="var(--clr-text-muted)" />
             <input
               type="text"
@@ -181,7 +181,7 @@ export default function SaasPage() {
       </div>
 
       {/* SaaS Grid */}
-      <div id="saas" style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 32px' }}>
+      <div id="saas" className="section-padding" style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '64px', color: 'var(--clr-text-muted)' }}>{isAr ? 'جاري تحميل الحلول...' : 'Loading solutions...'}</div>
         ) : filtered.length === 0 ? (
@@ -191,7 +191,7 @@ export default function SaasPage() {
             <p style={{ color: 'var(--clr-text-muted)' }}>{isAr ? 'حاول تعديل البحث أو الفلاتر.' : 'Try adjusting your search or filters.'}</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
             {filtered.map((saas) => {
               const fav = mounted ? isInWishlist(saas.id) : false;
               const name = isAr ? (saas.nameAr || saas.name) : saas.name;

@@ -47,16 +47,39 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
 
     if (paymentMethod === 'card') {
-      // Mock stripe charge
-      const updated = await db.servicePayment.update({
-        where: { id },
-        data: {
-          status: 'PAID',
-          paymentMethod: 'stripe',
-          transactionId: 'mock_stripe_' + Math.random().toString(36).substr(2, 9)
-        }
+      if (!process.env.STRIPE_SECRET_KEY) {
+        return NextResponse.json({ error: 'Stripe is not configured. Please contact the administrator.' }, { status: 500 });
+      }
+
+      // Determine site currency
+      const siteCurrencyObj = await db.siteSetting.findUnique({ where: { key: 'site_currency' } });
+      const siteCurrency = (siteCurrencyObj?.value || 'USD').toLowerCase();
+
+      // Create Stripe Checkout Session
+      const sessionCheckout = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: siteCurrency,
+              product_data: {
+                name: `Milestone Payment: ${payment.techSpec?.title || 'Service'}`,
+                description: `Payment for ${payment.techSpec?.clientName || 'Client'}`,
+              },
+              unit_amount: Math.round(payment.amount * 100),
+            },
+            quantity: 1,
+          },
+        ],
+        mode: 'payment',
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pay/${id}?success=true`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/pay/${id}?canceled=true`,
+        metadata: {
+          servicePaymentId: id,
+        },
       });
-      return NextResponse.json({ success: true, payment: updated });
+
+      return NextResponse.json({ success: true, url: sessionCheckout.url });
     } else if (paymentMethod === 'baridi' || paymentMethod === 'crypto') {
       if (!transactionId) {
         return NextResponse.json({ error: 'Transaction ID is required for manual payments' }, { status: 400 });

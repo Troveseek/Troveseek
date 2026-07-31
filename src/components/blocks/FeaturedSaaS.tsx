@@ -22,7 +22,7 @@ export async function FeaturedSaaS() {
   if (saasProducts.length === 0) return null; // Hide if empty
 
   return (
-    <section style={{ padding: '96px 32px', background: 'var(--clr-surface-2)' }}>
+    <section style={{ padding: 'clamp(48px, 10vw, 96px) 16px', background: 'var(--clr-surface-2)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
@@ -69,14 +69,14 @@ export async function FeaturedSaaS() {
                     </div>
                   )}
                 </div>
-                <div style={{ flex: '1 1 300px', padding: '48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ flex: '1 1 300px', padding: 'clamp(24px, 5vw, 48px)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(0,229,176,0.15)', color: '#00e5b0', padding: '6px 16px', borderRadius: '999px', fontSize: '13px', fontWeight: 600, marginBottom: '24px', width: 'fit-content' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00e5b0' }} /> {isAr ? 'نشط' : 'Live'}
                   </div>
                   <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700, marginBottom: '16px' }}>{isAr ? (saas.nameAr || saas.name) : saas.name}</h3>
                   <p style={{ fontSize: '16px', color: 'var(--clr-text-muted)', lineHeight: 1.7, marginBottom: '32px' }}>{isAr ? (saas.descriptionAr || saas.description) : saas.description}</p>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                     <div style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 700, color: 'var(--clr-primary)' }}>
                       {isAr ? `تبدأ من ${formatPrice(saas.monthlyPrice).replace(/\.00$/, '')}/شهر` : `From ${formatPrice(saas.monthlyPrice).replace(/\.00$/, '')}/mo`}
                     </div>

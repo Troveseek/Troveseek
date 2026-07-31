@@ -27,6 +27,15 @@ export default function ServicePayPage({ params }: { params: Promise<{ id: strin
   const [cardDetails, setCardDetails] = useState({ number: '', expiry: '', cvc: '' });
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('success') === 'true') {
+        setSuccess(true);
+      }
+      if (params.get('canceled') === 'true') {
+        setError(isAr ? 'تم إلغاء عملية الدفع.' : 'Payment was canceled.');
+      }
+    }
     fetch('/api/settings?keys=pay_stripe_enabled,pay_baridi_enabled,pay_crypto_enabled,pay_baridi_name,pay_baridi_rip,pay_crypto_usdt,pay_crypto_binance')
       .then(res => res.json())
       .then(data => {
@@ -97,9 +106,15 @@ export default function ServicePayPage({ params }: { params: Promise<{ id: strin
         }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || 'Payment failed');
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+        return;
       }
 
       setSuccess(true);

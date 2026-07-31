@@ -120,8 +120,40 @@
 @media (max-width: 1024px) {
   .shopPage {
     grid-template-columns: 1fr;
+    padding: 32px 16px;
   }
   .sidebar {
-    display: none; /* In a real app, this would be a toggleable drawer */
+    /* Stack sidebar above products on mobile instead of hiding */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: var(--clr-surface-2);
+    padding: 16px;
+    border-radius: var(--radius-md);
+  }
+  .filterGroup {
+    flex: 1;
+    min-width: 200px;
+  }
+  .productGrid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .shopPage {
+    padding: 16px 12px;
+  }
+  .sidebar {
+    flex-direction: column;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .productGrid {
+    grid-template-columns: 1fr;
   }
 }

@@ -117,6 +117,9 @@
 }
 
 @media (max-width: 640px) {
+  .footer {
+    padding: 48px 16px 32px;
+  }
   .container {
     grid-template-columns: 1fr 1fr;
   }

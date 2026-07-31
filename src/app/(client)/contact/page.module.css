@@ -234,3 +234,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 768px) {
+  .contactPage {
+    padding: 32px 16px 48px;
+  }
+  .formColumn {
+    padding: 20px;
+  }
+}

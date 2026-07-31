@@ -127,6 +127,7 @@ export async function POST(req: NextRequest) {
 
     // Generate order number
     const orderNumber = `TRV-${Date.now().toString().slice(-8)}`;
+    const isStripe = paymentMethod === 'card';
 
     const order = await db.order.create({
       data: {
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
         userId,
         totalAmount: Number(totalAmount),
         status: 'PENDING',
-        paymentStatus: paymentMethod === 'card' ? 'PAID' : 'UNPAID', // Mocking paid for card
+        paymentStatus: 'UNPAID', // Always unpaid initially
         paymentMethod: paymentMethod || 'card',
         transactionId: transactionId || null,
         billingInfo: billingInfo ? JSON.stringify(billingInfo) : null,
@@ -157,6 +158,38 @@ export async function POST(req: NextRequest) {
         items: true,
       },
     });
+
+    let checkoutUrl = null;
+    if (isStripe) {
+      if (!process.env.STRIPE_SECRET_KEY) {
+        return NextResponse.json({ error: 'Stripe is not configured.' }, { status: 500 });
+      }
+
+      // Determine site currency
+      const siteCurrencyObj = await db.siteSetting.findUnique({ where: { key: 'site_currency' } });
+      const siteCurrency = (siteCurrencyObj?.value || 'USD').toLowerCase();
+      
+      const stripe = new (require('stripe').default)(process.env.STRIPE_SECRET_KEY, { apiVersion: '2025-01-27.acacia' });
+
+      const sessionCheckout = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: order.items.map((item: any) => ({
+          price_data: {
+            currency: siteCurrency,
+            product_data: { name: item.itemName },
+            unit_amount: Math.round(item.unitPrice * 100),
+          },
+          quantity: item.quantity,
+        })),
+        mode: 'payment',
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/checkout?success=true&order=${order.id}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/checkout?canceled=true`,
+        metadata: {
+          orderId: order.id,
+        },
+      });
+      checkoutUrl = sessionCheckout.url;
+    }
 
     // Write audit log
     await db.auditLog.create({
@@ -222,9 +255,13 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ data: order, orderNumber }, { status: 201 });
-  } catch (error) {
-    console.error('Failed to create order:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ 
+      success: true, 
+      order, 
+      url: isStripe ? checkoutUrl : null 
+    });
+  } catch (error: any) {
+    console.error('Order creation error:', error);
+    return NextResponse.json({ error: error.message || 'Internal error' }, { status: 500 });
   }
 }

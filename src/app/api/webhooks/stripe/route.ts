@@ -54,6 +54,29 @@ export async function POST(req: NextRequest) {
               },
             });
           }
+        } else if (session.mode === 'payment') {
+          const { servicePaymentId, orderId } = session.metadata || {};
+          const paymentIntent = typeof session.payment_intent === 'string' ? session.payment_intent : (session.payment_intent as any)?.id;
+
+          if (servicePaymentId) {
+            await db.servicePayment.update({
+              where: { id: servicePaymentId },
+              data: {
+                status: 'PAID',
+                transactionId: paymentIntent || session.id,
+              },
+            });
+          }
+
+          if (orderId) {
+            await db.order.update({
+              where: { id: orderId },
+              data: {
+                paymentStatus: 'PAID',
+                transactionId: paymentIntent || session.id,
+              },
+            });
+          }
         }
         break;
       }
