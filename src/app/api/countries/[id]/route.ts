@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/lib/db';
-import { getServerSession } from 'next-auth/next';
+import { auth } from '@/lib/auth';
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getServerSession();
+    const session = await auth();
     const { id } = await params;
     const body = await req.json();
     const { code, name, nameAr, currency, taxRate, methods, defaultLanguage, isActive } = body;
@@ -32,7 +32,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const session = await getServerSession();
+    const session = await auth();
     const { id } = await params;
     
     await db.country.delete({
