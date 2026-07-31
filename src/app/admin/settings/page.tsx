@@ -189,6 +189,7 @@ export default function SettingsAdminPage() {
               <Input label="Public Email Address" value={settings.contact_email || ''} onChange={e => updateSetting('contact_email', e.target.value)} placeholder="contact@troveseek.com" />
               <Input label="Support Phone Number" value={settings.contact_phone || ''} onChange={e => updateSetting('contact_phone', e.target.value)} placeholder="+1 (555) 123-4567" />
               <Input label="Office Address" value={settings.contact_address || ''} onChange={e => updateSetting('contact_address', e.target.value)} placeholder="123 Innovation Drive, Tech City, TC 90210" />
+              <Input label="Google Maps URL" value={settings.contact_map_url || ''} onChange={e => updateSetting('contact_map_url', e.target.value)} placeholder="https://maps.app.goo.gl/..." />
             </div>
 
             <h4 style={{ fontSize: '16px', margin: '16px 0 0 0' }}>Social Media Links</h4>

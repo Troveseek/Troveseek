@@ -7,12 +7,25 @@ const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
+  code: z.string().length(6, 'Verification code must be 6 digits'),
 });
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, password } = registerSchema.parse(body);
+    const { name, email, password, code } = registerSchema.parse(body);
+
+    // Verify code
+    const tokenRecord = await db.verificationToken.findUnique({
+      where: { identifier_token: { identifier: email, token: code } },
+    });
+
+    if (!tokenRecord || tokenRecord.expires < new Date()) {
+      return NextResponse.json(
+        { error: 'Invalid or expired verification code' },
+        { status: 400 }
+      );
+    }
 
     // Check if user already exists
     const existingUser = await db.user.findUnique({
@@ -28,14 +41,15 @@ export async function POST(req: Request) {
 
     const hashedPassword = await hashPassword(password);
 
-    // Create the user
+    // Create the user and set emailVerified
     const user = await db.user.create({
       data: {
         name,
         email,
         passwordHash: hashedPassword,
-        role: 'CLIENT', // Default role for public registration
+        role: 'CLIENT',
         isActive: true,
+        emailVerified: new Date(),
       },
       select: {
         id: true,
@@ -43,6 +57,11 @@ export async function POST(req: Request) {
         email: true,
         role: true,
       }
+    });
+
+    // Delete token
+    await db.verificationToken.delete({
+      where: { identifier_token: { identifier: email, token: code } },
     });
 
     return NextResponse.json(
@@ -53,7 +72,7 @@ export async function POST(req: Request) {
     console.error('Registration error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Validation error', details: error.issues },
+        { error: error.issues[0].message },
         { status: 400 }
       );
     }

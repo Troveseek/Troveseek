@@ -10,6 +10,7 @@ const schema = z.object({
   longitude: z.number().min(-180).max(180).optional(),
   phone: z.string().optional().nullable(),
   email: z.string().email().optional().nullable().or(z.literal('')),
+  mapUrl: z.string().url().optional().nullable().or(z.literal('')),
   isActive: z.boolean().optional(),
 });
 

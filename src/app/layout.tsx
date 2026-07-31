@@ -67,6 +67,8 @@ import { Toaster } from 'sonner';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { CurrencyProvider } from '@/components/providers/CurrencyProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { RecaptchaProvider } from '@/components/providers/RecaptchaProvider';
 
 export default async function RootLayout({
   children,
@@ -79,11 +81,12 @@ export default async function RootLayout({
   let darkMode = "false";
   let gaId = "";
   let fbId = "";
+  let tiktokId = "";
   let siteCurrency = "USD";
   
   try {
     const settings = await db.siteSetting.findMany({
-      where: { key: { in: ['app_primary_color', 'app_accent_color', 'app_custom_css', 'app_dark_mode', 'seo_ga', 'seo_fb', 'site_currency'] } }
+      where: { key: { in: ['app_primary_color', 'app_accent_color', 'app_custom_css', 'app_dark_mode', 'seo_ga', 'seo_fb', 'seo_tiktok', 'site_currency'] } }
     });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -93,6 +96,7 @@ export default async function RootLayout({
     darkMode = map.app_dark_mode || "false";
     gaId = map.seo_ga || "";
     fbId = map.seo_fb || "";
+    tiktokId = map.seo_tiktok || "";
     siteCurrency = map.site_currency || "USD";
   } catch (e) {
     console.error("Error fetching settings in root layout", e);
@@ -103,7 +107,7 @@ export default async function RootLayout({
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir} className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} ${darkMode === 'true' ? 'dark' : ''}`} suppressHydrationWarning>
+    <html lang={locale} dir={dir} className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Google Analytics */}
         {gaId && (
@@ -150,21 +154,58 @@ export default async function RootLayout({
             </noscript>
           </>
         )}
+
+        {/* TikTok Pixel */}
+        {tiktokId && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                !function (w, d, t) {
+                  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=i+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+                  ttq.load('${tiktokId}');
+                  ttq.page();
+                }(window, document, 'ttq');
+              `,
+            }}
+          />
+        )}
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "TroveSeek",
+              "url": "https://troveseek.com",
+              "logo": "https://troveseek.com/images/logo.png",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+1-800-555-1212",
+                "contactType": "Customer Service"
+              }
+            })
+          }}
+        />
       </head>
       <body>
         <NextIntlClientProvider messages={messages}>
           <CurrencyProvider currencyCode={siteCurrency}>
-            {(primary || accent || customCss) ? (
-              <style dangerouslySetInnerHTML={{ __html: `
-                :root {
-                  ${primary ? `--clr-primary: ${primary} !important;` : ''}
-                  ${accent ? `--clr-accent: ${accent} !important;` : ''}
-                }
-                ${customCss}
-              `}} />
-            ) : null}
-            {children}
-            <Toaster position="top-right" richColors />
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <RecaptchaProvider>
+                {(primary || accent || customCss) ? (
+                  <style dangerouslySetInnerHTML={{ __html: `
+                    :root {
+                      ${primary ? `--clr-primary: ${primary} !important;` : ''}
+                      ${accent ? `--clr-accent: ${accent} !important;` : ''}
+                    }
+                    ${customCss}
+                  `}} />
+                ) : null}
+                {children}
+                <Toaster position="top-right" richColors />
+              </RecaptchaProvider>
+            </ThemeProvider>
           </CurrencyProvider>
         </NextIntlClientProvider>
       </body>

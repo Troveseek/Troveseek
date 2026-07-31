@@ -14,28 +14,14 @@
   border-radius: 24px;
   padding: 64px;
   display: flex;
-  gap: 64px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   box-shadow: var(--shadow-card);
 }
 
 .textContent {
-  flex: 1 1 400px;
-}
-
-.mapContent {
-  flex: 1 1 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.mapWrapper {
-  border-radius: 16px;
-  flex: 1;
-  min-height: 300px;
-  display: flex;
-  overflow: hidden;
+  width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -45,14 +31,5 @@
   
   .card {
     padding: 32px 20px;
-    gap: 40px;
-  }
-  
-  .textContent, .mapContent {
-    flex: 1 1 100%;
-  }
-
-  .mapWrapper {
-    min-height: 250px;
   }
 }

@@ -154,6 +154,11 @@ export default function LocationsAdminPage() {
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Email (optional)</label>
                 <input type="email" value={editForm.email || ''} onChange={e => setEditForm({...editForm, email: e.target.value})} style={{ width: '100%', padding: '10px', background: 'var(--clr-surface-2)', border: '1px solid var(--clr-border)', borderRadius: '8px', color: 'var(--clr-text)' }} />
               </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>Google Maps Link (optional)</label>
+                <p style={{ fontSize: '12px', color: 'var(--clr-text-muted)', marginBottom: '8px' }}>Paste the full Google Maps URL (e.g., https://maps.app.goo.gl/...) to make this location clickable.</p>
+                <input type="url" value={editForm.mapUrl || ''} onChange={e => setEditForm({...editForm, mapUrl: e.target.value})} style={{ width: '100%', padding: '10px', background: 'var(--clr-surface-2)', border: '1px solid var(--clr-border)', borderRadius: '8px', color: 'var(--clr-text)' }} placeholder="https://maps.app.goo.gl/..." />
+              </div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                 <input type="checkbox" checked={editForm.isActive ?? true} onChange={e => setEditForm({...editForm, isActive: e.target.checked})} />
                 Active

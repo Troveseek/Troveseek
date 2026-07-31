@@ -13,7 +13,7 @@ export default function ClientFooter({ siteName = "TroveSeek", siteLogoLight, si
   const [settings, setSettings] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    fetch('/api/settings?keys=contact_email,contact_phone,contact_address,social_twitter,social_linkedin,social_github,social_instagram')
+    fetch('/api/settings?keys=contact_email,contact_phone,contact_address,contact_map_url,social_twitter,social_linkedin,social_github,social_instagram')
       .then(res => res.json())
       .then(data => setSettings(data))
       .catch(console.error);
@@ -40,7 +40,18 @@ export default function ClientFooter({ siteName = "TroveSeek", siteLogoLight, si
           <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--clr-text-muted)', fontSize: '14px' }}>
             {settings.contact_email && <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Mail size={14}/> {settings.contact_email}</div>}
             {settings.contact_phone && <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Phone size={14}/> {settings.contact_phone}</div>}
-            {settings.contact_address && <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><MapPin size={14}/> {settings.contact_address}</div>}
+            {settings.contact_address && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MapPin size={14}/> 
+                {settings.contact_map_url ? (
+                  <a href={settings.contact_map_url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                    {settings.contact_address}
+                  </a>
+                ) : (
+                  settings.contact_address
+                )}
+              </div>
+            )}
           </div>
         </div>
         

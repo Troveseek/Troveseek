@@ -26,6 +26,8 @@
 }
 
 .primary:hover {
+  background: var(--clr-primary, #7c6fff);
+  filter: brightness(1.1);
   box-shadow: var(--shadow-glow);
   transform: translateY(-1px);
   color: #ffffff !important;

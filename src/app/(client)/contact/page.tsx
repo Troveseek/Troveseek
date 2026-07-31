@@ -7,8 +7,7 @@ import dynamic from 'next/dynamic';
 import styles from './page.module.css';
 import { useLocale } from 'next-intl';
 
-// Dynamically import the map component with SSR disabled
-const MapComponent = dynamic(() => import('@/components/ui/MapComponent'), { ssr: false });
+// Removed MapComponent
 
 export default function ContactPage() {
   const locale = useLocale();
@@ -17,19 +16,32 @@ export default function ContactPage() {
   const [contactInfo, setContactInfo] = useState({
     email: 'contact@troveseek.com',
     phone: '+1 (555) 123-4567',
-    address: '123 Innovation Drive, Tech City, TC 90210'
+    address: '123 Innovation Drive, Tech City, TC 90210',
+    mapUrl: ''
   });
+  
+  const [locations, setLocations] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('/api/settings?keys=contact_email,contact_phone,contact_address')
+    fetch('/api/settings?keys=contact_email,contact_phone,contact_address,contact_map_url')
       .then(res => res.json())
       .then(data => {
         if (data.contact_email || data.contact_phone || data.contact_address) {
           setContactInfo({
             email: data.contact_email || 'contact@troveseek.com',
             phone: data.contact_phone || '+1 (555) 123-4567',
-            address: data.contact_address || '123 Innovation Drive, Tech City, TC 90210'
+            address: data.contact_address || '123 Innovation Drive, Tech City, TC 90210',
+            mapUrl: data.contact_map_url || ''
           });
+        }
+      })
+      .catch(console.error);
+      
+    fetch('/api/locations')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.data) {
+          setLocations(data.data);
         }
       })
       .catch(console.error);
@@ -116,14 +128,41 @@ export default function ContactPage() {
               <div className={styles.contactIcon}><MapPin size={22} /></div>
               <div>
                 <div className={styles.contactLabel}>{isAr ? 'المقر العالمي' : 'Global Headquarters'}</div>
-                <div className={styles.contactValue}>{contactInfo.address}</div>
+                <div className={styles.contactValue}>
+                  {contactInfo.mapUrl ? (
+                    <a href={contactInfo.mapUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      {contactInfo.address}
+                    </a>
+                  ) : (
+                    contactInfo.address
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          <div className={styles.mapContainer}>
-            <MapComponent />
-          </div>
+          {locations.length > 0 && (
+            <div className={styles.infoCard} style={{ marginTop: '24px' }}>
+              <div className={styles.infoCardTitle}>{isAr ? 'مكاتب أخرى' : 'Other Offices'}</div>
+              {locations.map(loc => (
+                <div key={loc.id} className={styles.contactMethod}>
+                  <div className={styles.contactIcon}><MapPin size={22} /></div>
+                  <div>
+                    <div className={styles.contactLabel}>{loc.name}</div>
+                    <div className={styles.contactValue}>
+                      {loc.mapUrl ? (
+                        <a href={loc.mapUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
+                          {loc.address}
+                        </a>
+                      ) : (
+                        loc.address
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
