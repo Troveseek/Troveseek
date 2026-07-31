@@ -9,10 +9,11 @@ export default auth((req) => {
   
   if (url.pathname.startsWith('/admin')) {
     const hasAccessCookie = req.cookies.has('admin_unlocked');
-    const secretQuery = url.searchParams.get('secret');
-    const ADMIN_SECRET = process.env.ADMIN_SECRET || 'troveseek_admin_super_secret_2026';
+    const secretQuery = url.searchParams.get('secret')?.trim();
+    let envSecret = process.env.ADMIN_SECRET || 'troveseek_admin_super_secret_2026';
+    envSecret = envSecret.replace(/^["']|["']$/g, '').trim();
 
-    if (secretQuery === ADMIN_SECRET) {
+    if (secretQuery && secretQuery === envSecret) {
       url.searchParams.delete('secret');
       const response = NextResponse.redirect(url);
       response.cookies.set('admin_unlocked', 'true', {
