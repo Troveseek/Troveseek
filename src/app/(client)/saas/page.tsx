@@ -174,7 +174,7 @@ export default function SaasPage() {
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '64px', color: 'var(--clr-text-muted)' }}>{isAr ? 'جاري تحميل الحلول...' : 'Loading solutions...'}</div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '64px 0', background: 'var(--clr-surface)', borderRadius: '16px' }}>
+          <div style={{ textAlign: 'center', padding: '64px 0', background: 'var(--clr-surface)', borderRadius: '16px', marginBottom: '64px' }}>
             <LayoutGrid size={48} color="var(--clr-border)" style={{ margin: '0 auto 16px' }} />
             <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>{isAr ? 'لا توجد حلول' : 'No solutions found'}</h3>
             <p style={{ color: 'var(--clr-text-muted)' }}>{isAr ? 'حاول تعديل البحث أو الفلاتر.' : 'Try adjusting your search or filters.'}</p>
