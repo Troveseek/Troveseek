@@ -8,6 +8,7 @@ import { useWishlistStore } from '@/lib/store/wishlistStore';
 import { Search, Star, LayoutGrid, Heart, Share2 } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { useCurrency } from '@/components/providers/CurrencyProvider';
+import styles from './page.module.css';
 
 export default function SaasPage() {
   const locale = useLocale();
@@ -145,9 +146,9 @@ export default function SaasPage() {
       </div>
 
       {/* Filter Bar */}
-      <div style={{ borderBottom: '1px solid var(--clr-border)', background: 'var(--clr-surface)', position: 'sticky', top: '72px', zIndex: 40 }}>
-        <div className="section-padding" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', paddingTop: '24px', paddingBottom: '24px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--clr-surface-2)', border: '1px solid var(--clr-border)', borderRadius: '999px', padding: '10px 16px', flex: '1 1 280px' }}>
+      <div className={styles.filterBar}>
+        <div className={styles.filterContainer}>
+          <div className={styles.searchBox}>
             <Search size={16} color="var(--clr-text-muted)" />
             <input
               type="text"
@@ -157,7 +158,7 @@ export default function SaasPage() {
               style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--clr-text)', fontSize: '14px', width: '100%', fontFamily: 'var(--font-body)' }}
             />
           </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div className={styles.categories}>
             <button
               onClick={() => setSelectedCategory('ALL_CATEGORIES')}
               style={{ padding: '8px 16px', borderRadius: '999px', border: `1px solid ${selectedCategory === 'ALL_CATEGORIES' ? 'var(--clr-primary)' : 'var(--clr-border)'}`, background: selectedCategory === 'ALL_CATEGORIES' ? 'var(--clr-primary-dim)' : 'transparent', color: selectedCategory === 'ALL_CATEGORIES' ? 'var(--clr-primary)' : 'var(--clr-text-muted)', fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font-body)' }}
@@ -174,7 +175,7 @@ export default function SaasPage() {
               </button>
             ))}
           </div>
-          <div style={{ marginLeft: 'auto', fontSize: '14px', color: 'var(--clr-text-muted)' }}>
+          <div className={styles.resultCount}>
             {isLoading ? '...' : `${filtered.length} ${isAr ? 'حل' : `solution${filtered.length !== 1 ? 's' : ''}`}`}
           </div>
         </div>

@@ -1,26 +1,42 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import { LiveChatButton } from '@/components/ui/LiveChatButton';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useLocale } from 'next-intl';
+import styles from './ContactPreview.module.css';
 
 const MapComponent = dynamic(() => import('@/components/ui/MapComponent'), { ssr: false });
 
 export function ContactPreview() {
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const [contactInfo, setContactInfo] = useState({ email: 'contact@troveseek.com', phone: '+1 (555) 234-5678' });
+
+  useEffect(() => {
+    fetch('/api/settings?keys=contact_email,contact_phone')
+      .then(res => res.json())
+      .then(data => {
+        if (data.contact_email || data.contact_phone) {
+          setContactInfo({
+            email: data.contact_email || 'contact@troveseek.com',
+            phone: data.contact_phone || '+1 (555) 234-5678'
+          });
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   return (
-    <section style={{ padding: '96px 32px', background: 'var(--clr-bg)' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <section className={styles.section}>
+      <div className={styles.container}>
         
-        <div style={{ background: 'linear-gradient(135deg, var(--clr-surface-2), var(--clr-surface))', border: '1px solid var(--clr-border)', borderRadius: '24px', padding: '64px', display: 'flex', gap: '64px', flexWrap: 'wrap', boxShadow: 'var(--shadow-card)' }}>
+        <div className={styles.card}>
           
-          <div style={{ flex: '1 1 400px' }}>
+          <div className={styles.textContent}>
             <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
               {isAr ? 'تواصل معنا' : 'Get in Touch'}
             </div>
@@ -36,14 +52,14 @@ export function ContactPreview() {
                 <div style={{ background: 'var(--clr-primary-dim)', color: 'var(--clr-primary)', padding: '12px', borderRadius: '12px' }}><Mail size={20} /></div>
                 <div>
                   <div style={{ fontSize: '13px', color: 'var(--clr-text-muted)', marginBottom: '4px' }}>{isAr ? 'راسلنا' : 'Email Us'}</div>
-                  <div style={{ fontWeight: 600 }}>contact@troveseek.com</div>
+                  <div style={{ fontWeight: 600 }}>{contactInfo.email}</div>
                 </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <div style={{ background: 'rgba(0,229,176,0.1)', color: 'var(--clr-accent)', padding: '12px', borderRadius: '12px' }}><Phone size={20} /></div>
                 <div>
                   <div style={{ fontSize: '13px', color: 'var(--clr-text-muted)', marginBottom: '4px' }}>{isAr ? 'اتصل بنا' : 'Call Us'}</div>
-                  <div style={{ fontWeight: 600 }}>+1 (555) 234-5678</div>
+                  <div style={{ fontWeight: 600 }}>{contactInfo.phone}</div>
                 </div>
               </div>
             </div>
@@ -56,8 +72,8 @@ export function ContactPreview() {
             </div>
           </div>
           
-          <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ borderRadius: '16px', flex: 1, minHeight: '300px', display: 'flex', overflow: 'hidden' }}>
+          <div className={styles.mapContent}>
+            <div className={styles.mapWrapper}>
               <MapComponent />
             </div>
           </div>

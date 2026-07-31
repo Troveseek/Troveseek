@@ -21,13 +21,14 @@
 /* Variants */
 .primary {
   background: var(--clr-primary, #7c6fff);
-  color: #ffffff;
+  color: #ffffff !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .primary:hover {
   box-shadow: var(--shadow-glow);
   transform: translateY(-1px);
+  color: #ffffff !important;
 }
 
 .primary:active {
@@ -36,32 +37,34 @@
 
 .secondary {
   background: var(--clr-surface-3);
-  color: var(--clr-text);
+  color: var(--clr-text) !important;
   border: 1px solid var(--clr-border);
 }
 
 .secondary:hover {
   background: var(--clr-surface-2);
+  color: var(--clr-text) !important;
 }
 
 .ghost {
   background: transparent;
-  color: var(--clr-text-muted);
+  color: var(--clr-text-muted) !important;
 }
 
 .ghost:hover {
   background: var(--clr-surface-2);
-  color: var(--clr-text);
+  color: var(--clr-text) !important;
 }
 
 .danger {
   background: rgba(255, 68, 68, 0.1);
-  color: var(--clr-danger, #ff4444);
+  color: var(--clr-danger, #ff4444) !important;
   border: 1px solid rgba(255, 68, 68, 0.2);
 }
 
 .danger:hover {
   background: rgba(255, 68, 68, 0.2);
+  color: var(--clr-danger, #ff4444) !important;
 }
 
 /* Sizes */

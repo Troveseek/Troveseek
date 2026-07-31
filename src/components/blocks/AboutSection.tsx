@@ -4,6 +4,7 @@ import Button from '@/components/ui/Button';
 import { Target, Lightbulb, Globe, Award } from 'lucide-react';
 import db from '@/lib/db';
 import { getLocale } from 'next-intl/server';
+import styles from './AboutSection.module.css';
 
 export async function AboutSection() {
   const locale = await getLocale();
@@ -33,20 +34,20 @@ export async function AboutSection() {
     return getSetting(key, defaultVal);
   };
 
-  const title = getLocalized('about_title', 'Empowering Your Digital Transformation');
-  const subtitle = getLocalized('about_subtitle', 'About TroveSeek');
-  const desc = getLocalized('about_description', 'TroveSeek is a global enterprise platform unifying digital commerce, SaaS distribution, and professional IT services.');
-  const mission = getLocalized('about_mission', 'Simplify complex technology for businesses globally.');
-  const vision = getLocalized('about_vision', 'Be the leading digital ecosystem worldwide.');
-  const ctaLabel = getLocalized('about_cta_label', 'Learn More About Us');
+  const title = getLocalized('about_title', isAr ? 'تمكين التحول الرقمي الخاص بك' : 'Empowering Your Digital Transformation');
+  const subtitle = getLocalized('about_subtitle', isAr ? 'حول تروف سيك' : 'About TroveSeek');
+  const desc = getLocalized('about_description', isAr ? 'تروف سيك هي منصة مؤسسية عالمية توحد التجارة الرقمية، وتوزيع البرمجيات كخدمة، وخدمات تكنولوجيا المعلومات الاحترافية.' : 'TroveSeek is a global enterprise platform unifying digital commerce, SaaS distribution, and professional IT services.');
+  const mission = getLocalized('about_mission', isAr ? 'تبسيط التكنولوجيا المعقدة للشركات عالميًا.' : 'Simplify complex technology for businesses globally.');
+  const vision = getLocalized('about_vision', isAr ? 'أن نكون النظام البيئي الرقمي الرائد في جميع أنحاء العالم.' : 'Be the leading digital ecosystem worldwide.');
+  const ctaLabel = getLocalized('about_cta_label', isAr ? 'تعرف علينا أكثر' : 'Learn More About Us');
   const ctaUrl = getSetting('about_cta_url', '/about');
 
   return (
-    <section style={{ padding: '96px 32px', background: 'var(--clr-bg)' }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', gap: '64px', alignItems: 'center', flexWrap: 'wrap' }}>
+    <section className={styles.section}>
+      <div className={styles.container}>
         
         {/* Left: Text Content */}
-        <div style={{ flex: '1 1 500px' }}>
+        <div className={styles.textContent}>
           <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
             {subtitle}
           </div>
@@ -57,7 +58,7 @@ export async function AboutSection() {
             {desc}
           </p>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '40px' }}>
+          <div className={styles.missionsGrid}>
             <div style={{ display: 'flex', gap: '16px' }}>
               <div style={{ color: 'var(--clr-primary)', background: 'var(--clr-primary-dim)', padding: '12px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Target size={24} /></div>
               <div>
@@ -82,25 +83,14 @@ export async function AboutSection() {
         </div>
 
         {/* Right: Stats & Visual */}
-        <div style={{ flex: '1 1 400px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+        <div className={styles.statsGrid}>
           {[
-            { value: getLocalized('about_stat1_value', '150+'), label: getLocalized('about_stat1_label', 'Countries Served'), icon: <Globe size={20} color="var(--clr-primary)" /> },
-            { value: getLocalized('about_stat2_value', '10,000+'), label: getLocalized('about_stat2_label', 'Digital Products'), icon: <Target size={20} color="var(--clr-accent)" /> },
-            { value: getLocalized('about_stat3_value', '500+'), label: getLocalized('about_stat3_label', 'SaaS Solutions'), icon: <Lightbulb size={20} color="#ffaa00" /> },
-            { value: getLocalized('about_stat4_value', '99.9%'), label: getLocalized('about_stat4_label', 'Uptime'), icon: <Award size={20} color="#ff4444" /> },
+            { value: getLocalized('about_stat1_value', isAr ? '150+' : '150+'), label: getLocalized('about_stat1_label', isAr ? 'البلدان المخدومة' : 'Countries Served'), icon: <Globe size={20} color="var(--clr-primary)" /> },
+            { value: getLocalized('about_stat2_value', isAr ? '10,000+' : '10,000+'), label: getLocalized('about_stat2_label', isAr ? 'المنتجات الرقمية' : 'Digital Products'), icon: <Target size={20} color="var(--clr-accent)" /> },
+            { value: getLocalized('about_stat3_value', isAr ? '500+' : '500+'), label: getLocalized('about_stat3_label', isAr ? 'حلول SaaS' : 'SaaS Solutions'), icon: <Lightbulb size={20} color="#ffaa00" /> },
+            { value: getLocalized('about_stat4_value', isAr ? '99.9%' : '99.9%'), label: getLocalized('about_stat4_label', isAr ? 'وقت التشغيل' : 'Uptime'), icon: <Award size={20} color="#ff4444" /> },
           ].map((stat, i) => (
-            <div key={i} style={{
-              background: 'var(--clr-surface)',
-              border: '1px solid var(--clr-border)',
-              borderRadius: '16px',
-              padding: '32px 24px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              textAlign: 'center',
-              boxShadow: 'var(--shadow-card)',
-              transform: i % 2 !== 0 ? 'translateY(24px)' : 'none'
-            }}>
+            <div key={i} className={styles.statCard}>
               <div style={{ marginBottom: '16px' }}>{stat.icon}</div>
               <div style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700, color: 'var(--clr-text)', marginBottom: '8px' }}>
                 {stat.value}

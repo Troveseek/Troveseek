@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@/components/ui/Button';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -13,6 +13,27 @@ const MapComponent = dynamic(() => import('@/components/ui/MapComponent'), { ssr
 export default function ContactPage() {
   const locale = useLocale();
   const isAr = locale === 'ar';
+  
+  const [contactInfo, setContactInfo] = useState({
+    email: 'contact@troveseek.com',
+    phone: '+1 (555) 123-4567',
+    address: '123 Innovation Drive, Tech City, TC 90210'
+  });
+
+  useEffect(() => {
+    fetch('/api/settings?keys=contact_email,contact_phone,contact_address')
+      .then(res => res.json())
+      .then(data => {
+        if (data.contact_email || data.contact_phone || data.contact_address) {
+          setContactInfo({
+            email: data.contact_email || 'contact@troveseek.com',
+            phone: data.contact_phone || '+1 (555) 123-4567',
+            address: data.contact_address || '123 Innovation Drive, Tech City, TC 90210'
+          });
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <div className={styles.contactPage}>
@@ -79,7 +100,7 @@ export default function ContactPage() {
               <div className={styles.contactIcon}><Mail size={22} /></div>
               <div>
                 <div className={styles.contactLabel}>{isAr ? 'البريد الإلكتروني' : 'Email'}</div>
-                <div className={styles.contactValue}>hello@troveseek.com</div>
+                <div className={styles.contactValue}>{contactInfo.email}</div>
               </div>
             </div>
 
@@ -87,7 +108,7 @@ export default function ContactPage() {
               <div className={styles.contactIcon}><Phone size={22} /></div>
               <div>
                 <div className={styles.contactLabel}>{isAr ? 'الهاتف' : 'Phone'}</div>
-                <div className={styles.contactValue}>+1 (555) 123-4567</div>
+                <div className={styles.contactValue}>{contactInfo.phone}</div>
               </div>
             </div>
 
@@ -95,7 +116,7 @@ export default function ContactPage() {
               <div className={styles.contactIcon}><MapPin size={22} /></div>
               <div>
                 <div className={styles.contactLabel}>{isAr ? 'المقر العالمي' : 'Global Headquarters'}</div>
-                <div className={styles.contactValue}>123 Innovation Drive, Tech City, TC 90210</div>
+                <div className={styles.contactValue}>{contactInfo.address}</div>
               </div>
             </div>
           </div>

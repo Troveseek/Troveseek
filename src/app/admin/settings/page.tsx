@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 import { 
   Settings as SettingsIcon, Palette, CreditCard, Mail, 
   Shield, TrendingUp, Bell, HardDrive, AlertTriangle, 
-  Terminal, Scale, Save, DownloadCloud, RotateCcw, Link as LinkIcon, Loader 
+  Terminal, Scale, Save, DownloadCloud, RotateCcw, Link as LinkIcon, Loader, PhoneCall
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -23,6 +23,7 @@ export default function SettingsAdminPage() {
 
   const navItems = [
     { id: 'general', label: 'General', icon: SettingsIcon },
+    { id: 'contact', label: 'Contact & Social', icon: PhoneCall },
     { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'payment', label: 'Payment', icon: CreditCard },
     { id: 'email', label: 'Email', icon: Mail },
@@ -178,6 +179,32 @@ export default function SettingsAdminPage() {
           </div>
         );
       
+      case 'contact':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '600px' }}>
+            <h3 style={{ fontSize: '20px', margin: 0 }}>Contact & Social Information</h3>
+            <p style={{ margin: 0, fontSize: '14px', color: 'var(--clr-text-muted)' }}>Manage the contact details and social links displayed across your site.</p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <Input label="Public Email Address" value={settings.contact_email || ''} onChange={e => updateSetting('contact_email', e.target.value)} placeholder="contact@troveseek.com" />
+              <Input label="Support Phone Number" value={settings.contact_phone || ''} onChange={e => updateSetting('contact_phone', e.target.value)} placeholder="+1 (555) 123-4567" />
+              <Input label="Office Address" value={settings.contact_address || ''} onChange={e => updateSetting('contact_address', e.target.value)} placeholder="123 Innovation Drive, Tech City, TC 90210" />
+            </div>
+
+            <h4 style={{ fontSize: '16px', margin: '16px 0 0 0' }}>Social Media Links</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <Input label="Twitter / X Profile URL" value={settings.social_twitter || ''} onChange={e => updateSetting('social_twitter', e.target.value)} placeholder="https://twitter.com/troveseek" />
+              <Input label="LinkedIn Page URL" value={settings.social_linkedin || ''} onChange={e => updateSetting('social_linkedin', e.target.value)} placeholder="https://linkedin.com/company/troveseek" />
+              <Input label="GitHub Organization URL" value={settings.social_github || ''} onChange={e => updateSetting('social_github', e.target.value)} placeholder="https://github.com/troveseek" />
+              <Input label="Instagram Profile URL" value={settings.social_instagram || ''} onChange={e => updateSetting('social_instagram', e.target.value)} placeholder="https://instagram.com/troveseek" />
+            </div>
+
+            <div>
+              <Button variant="primary" icon={saving ? <Loader className="spin" size={16} /> : <Save size={16} />} onClick={handleSave} disabled={saving}>Save Changes</Button>
+            </div>
+          </div>
+        );
+
       case 'appearance':
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '600px' }}>
