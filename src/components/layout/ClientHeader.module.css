@@ -167,11 +167,11 @@
   transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.mobileDrawerOpen {
+.mobileDrawer.mobileDrawerOpen {
   right: 0;
 }
 
-[dir='rtl'] .mobileDrawerOpen {
+[dir='rtl'] .mobileDrawer.mobileDrawerOpen {
   left: 0;
 }
 
