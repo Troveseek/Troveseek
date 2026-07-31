@@ -37,7 +37,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const body = await req.json();
     const { paymentMethod, transactionId, receiptUrl } = body;
 
-    const payment = await db.servicePayment.findUnique({ where: { id } });
+    const payment = await db.servicePayment.findUnique({ 
+      where: { id },
+      include: { techSpec: true }
+    });
     if (!payment) {
       return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
     }
