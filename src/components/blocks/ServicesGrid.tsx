@@ -32,7 +32,7 @@ export async function ServicesGrid() {
   if (services.length === 0) return null; // Hide if empty
 
   return (
-    <section style={{ padding: '96px 32px', background: 'var(--clr-surface)' }}>
+    <section className="section-padding" style={{ background: 'var(--clr-surface)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px', flexWrap: 'wrap', gap: '16px' }}>

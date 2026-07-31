@@ -158,6 +158,9 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 60px 16px;
+  }
   .title {
     font-size: 48px;
   }
@@ -174,6 +177,6 @@
 
 @media (max-width: 480px) {
   .title {
-    font-size: 40px;
+    font-size: 36px;
   }
 }
