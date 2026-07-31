@@ -63,11 +63,11 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
     });
 
     if (res.ok) {
-      toast.success('Announcement updated');
+      toast.success('Banner updated');
       router.push('/admin/announcements');
       router.refresh();
     } else {
-      setError('Failed to update announcement');
+      setError('Failed to update banner');
       setSaving(false);
     }
   };
@@ -86,8 +86,8 @@ export default function EditAnnouncementPage({ params }: { params: Promise<{ id:
     <form className={styles.formPage} onSubmit={handleSave}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.title}>Edit Announcement</h1>
-          <p className={styles.subtitle}>Update this page hero or announcement section.</p>
+          <h1 className={styles.title}>Edit Banner</h1>
+          <p className={styles.subtitle}>Update this page hero or banner section.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Link href="/admin/announcements">

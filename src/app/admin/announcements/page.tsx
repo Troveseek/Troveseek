@@ -34,11 +34,11 @@ export default function AnnouncementsAdminPage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '28px', fontFamily: 'var(--font-display)', margin: 0, color: 'var(--clr-text)' }}>Announcements (Page Heroes)</h1>
-          <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px', marginTop: '4px' }}>Manage the hero sections across different pages.</p>
+          <h1 style={{ fontSize: '28px', fontFamily: 'var(--font-display)', margin: 0, color: 'var(--clr-text)' }}>Page Banners / Heroes</h1>
+          <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px', marginTop: '4px' }}>Manage the hero banners across different pages (e.g., Home, SaaS, Services).</p>
         </div>
         <Link href="/admin/announcements/new" style={{ textDecoration: 'none' }}>
-          <Button variant="primary" icon={<Plus size={16} />}>Create Announcement</Button>
+          <Button variant="primary" icon={<Plus size={16} />}>Create Banner</Button>
         </Link>
       </div>
 

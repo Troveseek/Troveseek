@@ -108,42 +108,30 @@ export default function SaasPage() {
   return (
     <div style={{ minHeight: '100vh' }}>
       {/* Hero */}
-      <div style={{ background: 'linear-gradient(135deg, var(--clr-surface-2) 0%, var(--clr-surface) 100%)', padding: '64px 32px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <div style={{ flex: '1 1 480px' }}>
-            {heroData?.label && (
-              <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
-                {heroData.label}
-              </div>
-            )}
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(36px, 5vw, 52px)', fontWeight: 700, lineHeight: 1.15, marginBottom: '20px' }}>
-              {heroData ? (isAr ? (heroData.titleAr || heroData.title) : heroData.title) : (isAr ? 'برمجيات المؤسسات، مبسطة' : 'Enterprise Software, Simplified')}
-            </h1>
-            <p style={{ fontSize: '17px', color: 'var(--clr-text-muted)', maxWidth: '500px', lineHeight: 1.7, marginBottom: '32px' }}>
-              {heroData?.subtitle 
-                ? (isAr ? (heroData.subtitleAr || heroData.subtitle) : heroData.subtitle)
-                : (isAr ? `اكتشف ${saasProducts.length}+ حلول SaaS لكل احتياجات الأعمال — مع تجارب مجانية واشتراكات مرنة.` : `Discover ${saasProducts.length}+ SaaS solutions for every business need — from CRM to DevOps, with free trials and flexible subscriptions.`)}
-            </p>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-              {heroButtons.length > 0 ? heroButtons.map((btn: any, i: number) => (
-                btn.isActive && (
-                  <Link key={i} href={btn.url} style={{ textDecoration: 'none' }}>
-                    <Button variant={btn.variant as any} size="lg">
-                      {isAr ? (btn.labelAr || (btn.label?.trim().toLowerCase() === 'browse solutions' ? 'تصفح الحلول' : btn.label)) : btn.label}
-                    </Button>
-                  </Link>
-                )
-              )) : (
-                <>
-                  <Link href="#saas" style={{ textDecoration: 'none' }}>
-                    <Button variant="primary" size="lg">{isAr ? 'تصفح الحلول' : 'Browse Solutions'}</Button>
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
+      <section className={styles.hero}>
+        <div className={styles.eyebrow}>{heroData?.label ? (isAr ? (heroData.labelAr || heroData.label) : heroData.label) : (isAr ? 'برمجيات SaaS' : 'SaaS Software')}</div>
+        <h1 className={styles.title}>
+          {heroData?.title ? (isAr ? (heroData.titleAr || heroData.title) : heroData.title) : (isAr ? 'برمجيات المؤسسات، مبسطة' : 'Enterprise Software, Simplified')}
+        </h1>
+        <p className={styles.subtitle}>
+          {heroData?.subtitle 
+            ? (isAr ? (heroData.subtitleAr || heroData.subtitle) : heroData.subtitle)
+            : (isAr ? `اكتشف ${saasProducts.length}+ حلول SaaS لكل احتياجات الأعمال — مع تجارب مجانية واشتراكات مرنة.` : `Discover ${saasProducts.length}+ SaaS solutions for every business need — from CRM to DevOps, with free trials and flexible subscriptions.`)}
+        </p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap', marginTop: '32px' }}>
+          {heroButtons.length > 0 ? heroButtons.map((btn: any, i: number) => (
+            btn.isActive && (
+              <Button key={i} href={btn.url} variant={btn.variant as any} size="lg">
+                {isAr ? (btn.labelAr || (btn.label?.trim().toLowerCase() === 'browse solutions' ? 'تصفح الحلول' : btn.label)) : btn.label}
+              </Button>
+            )
+          )) : (
+            <>
+              <Button href="#saas" variant="primary" size="lg">{isAr ? 'تصفح الحلول' : 'Browse Solutions'}</Button>
+            </>
+          )}
         </div>
-      </div>
+      </section>
 
       {/* Filter Bar */}
       <div className={styles.filterBar}>

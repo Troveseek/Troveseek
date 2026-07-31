@@ -39,11 +39,11 @@ export default function NewAnnouncementPage() {
     });
 
     if (res.ok) {
-      toast.success('Announcement created');
+      toast.success('Banner created');
       router.push('/admin/announcements');
       router.refresh();
     } else {
-      setError('Failed to create announcement');
+      setError('Failed to create banner');
       setSaving(false);
     }
   };
@@ -60,15 +60,15 @@ export default function NewAnnouncementPage() {
     <form className={styles.formPage} onSubmit={handleSave}>
       <div className={styles.pageHeader}>
         <div>
-          <h1 className={styles.title}>Create Announcement</h1>
-          <p className={styles.subtitle}>Add a new page hero or announcement section.</p>
+          <h1 className={styles.title}>Create Banner</h1>
+          <p className={styles.subtitle}>Add a new page hero or banner section.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Link href="/admin/announcements">
             <Button type="button" variant="secondary" icon={<ArrowLeft size={16} />}>Cancel</Button>
           </Link>
           <Button type="submit" icon={saving ? <Loader size={16} className="spin" /> : <Save size={16} />} disabled={saving}>
-            {saving ? 'Saving...' : 'Save Announcement'}
+            {saving ? 'Saving...' : 'Save Banner'}
           </Button>
         </div>
       </div>

@@ -87,7 +87,7 @@ export default function AdminSidebar({ isOpen = false }: AdminSidebarProps) {
         { name: 'Reviews', href: '/admin/reviews', icon: MessageCircle },
         { name: 'About Page', href: '/admin/about', icon: LayoutTemplate },
         { name: 'Gallery CMS', href: '/admin/gallery', icon: Image },
-        { name: 'Announcements', href: '/admin/announcements', icon: Megaphone },
+        { name: 'Page Banners / Heroes', href: '/admin/announcements', icon: Megaphone },
         { name: 'Countries', href: '/admin/countries', icon: Globe },
         { name: 'Locations', href: '/admin/locations', icon: MapPin },
         { name: 'Marketing', href: '/admin/marketing', icon: Target },
