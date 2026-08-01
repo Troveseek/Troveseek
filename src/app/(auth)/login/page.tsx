@@ -22,13 +22,19 @@ export default function LoginPage() {
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [legalTerms, setLegalTerms] = useState<string | null>(null);
   const [legalPrivacy, setLegalPrivacy] = useState<string | null>(null);
+  const [siteLogoLight, setSiteLogoLight] = useState<string | null>(null);
+  const [siteLogoDark, setSiteLogoDark] = useState<string | null>(null);
+  const [siteName, setSiteName] = useState('TroveSeek');
 
   React.useEffect(() => {
-    fetch('/api/settings?keys=legal_terms,legal_privacy')
+    fetch('/api/settings?keys=legal_terms,legal_privacy,site_logo_light,site_logo_dark,site_name')
       .then(res => res.json())
       .then(data => {
         if (data.legal_terms) setLegalTerms(data.legal_terms);
         if (data.legal_privacy) setLegalPrivacy(data.legal_privacy);
+        if (data.site_logo_light) setSiteLogoLight(data.site_logo_light);
+        if (data.site_logo_dark) setSiteLogoDark(data.site_logo_dark);
+        if (data.site_name) setSiteName(data.site_name);
       })
       .catch(console.error);
   }, []);
@@ -97,6 +103,18 @@ export default function LoginPage() {
   return (
     <Card variant="glass">
       <CardHeader style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ marginBottom: '16px' }}>
+          {siteLogoLight || siteLogoDark ? (
+            <>
+              {siteLogoLight && <img src={siteLogoLight} alt={siteName} className={siteLogoDark ? 'logoLight' : ''} style={{ maxHeight: '48px', objectFit: 'contain' }} />}
+              {siteLogoDark && <img src={siteLogoDark} alt={siteName} className={siteLogoLight ? 'logoDark' : ''} style={{ maxHeight: '48px', objectFit: 'contain' }} />}
+            </>
+          ) : (
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold' }}>
+              {siteName.charAt(0)}
+            </div>
+          )}
+        </div>
         <CardTitle style={{ fontSize: '24px' }}>{isAr ? 'مرحباً بعودتك' : 'Welcome back'}</CardTitle>
         <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px', marginTop: '8px' }}>
           {isAr ? 'أدخل بيانات الاعتماد الخاصة بك للوصول إلى حسابك' : 'Enter your credentials to access your account'}

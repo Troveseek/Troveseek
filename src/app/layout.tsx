@@ -24,6 +24,8 @@ const jetbrainsMono = JetBrains_Mono({
   preload: false,
 });
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata(): Promise<Metadata> {
   let title = "TroveSeek Ltd";
   let description = "Beyond Search. Beyond Expectations.";
@@ -48,6 +50,9 @@ export async function generateMetadata(): Promise<Metadata> {
     title, 
     description,
     keywords: ["software", "cloud", "saas", "agency", siteName],
+    icons: {
+      icon: map.site_logo_light || map.site_logo_dark || "/favicon.ico",
+    },
     openGraph: {
       title,
       description,
@@ -113,8 +118,6 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
-        {/* Favicon */}
-        <link rel="icon" href={faviconUrl} />
         
         {/* Google Analytics */}
         {gaId && (

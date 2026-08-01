@@ -15,6 +15,20 @@ function AdminLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [siteLogoLight, setSiteLogoLight] = useState<string | null>(null);
+  const [siteLogoDark, setSiteLogoDark] = useState<string | null>(null);
+  const [siteName, setSiteName] = useState('TroveSeek Admin');
+
+  React.useEffect(() => {
+    fetch('/api/settings?keys=site_logo_light,site_logo_dark,site_name')
+      .then(res => res.json())
+      .then(data => {
+        if (data.site_logo_light) setSiteLogoLight(data.site_logo_light);
+        if (data.site_logo_dark) setSiteLogoDark(data.site_logo_dark);
+        if (data.site_name) setSiteName(data.site_name + ' Admin');
+      })
+      .catch(console.error);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,23 +78,30 @@ function AdminLoginForm() {
       }}>
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '56px', height: '56px',
-            borderRadius: '16px',
-            background: 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))',
-            marginBottom: '16px',
-            boxShadow: '0 0 40px rgba(124,111,255,0.3)',
-          }}>
-            <Shield size={28} color="#fff" />
-          </div>
+          {siteLogoLight || siteLogoDark ? (
+            <div style={{ marginBottom: '16px' }}>
+              {siteLogoLight && <img src={siteLogoLight} alt={siteName} className={siteLogoDark ? 'logoLight' : ''} style={{ maxHeight: '56px', objectFit: 'contain' }} />}
+              {siteLogoDark && <img src={siteLogoDark} alt={siteName} className={siteLogoLight ? 'logoDark' : ''} style={{ maxHeight: '56px', objectFit: 'contain' }} />}
+            </div>
+          ) : (
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '56px', height: '56px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))',
+              marginBottom: '16px',
+              boxShadow: '0 0 40px rgba(124,111,255,0.3)',
+            }}>
+              <Shield size={28} color="#fff" />
+            </div>
+          )}
           <h1 style={{
             fontSize: '28px', fontWeight: 700,
             color: 'var(--clr-text)', marginBottom: '8px',
           }}>
-            TroveSeek Admin
+            {siteName}
           </h1>
           <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px' }}>
             Secure enterprise management portal
