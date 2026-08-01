@@ -35,9 +35,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const url = process.env.NEXTAUTH_URL || 'https://troveseek.com';
 
   try {
-    const settings = await db.siteSetting.findMany({
+    const fetchSettings = db.siteSetting.findMany({
       where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description', 'site_favicon', 'site_logo_light', 'site_logo_dark'] } }
     });
+    
+    // Timeout after 2.5 seconds to prevent static generation hang
+    const timeout = new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('Metadata DB query timed out')), 2500)
+    );
+
+    const settings = await Promise.race([fetchSettings, timeout]) as any[];
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
     
@@ -47,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
     faviconUrl = map.site_favicon || map.site_logo_dark || map.site_logo_light || "/icon.png";
     appleIconUrl = map.site_favicon || map.site_logo_dark || map.site_logo_light || "/apple-icon.png";
   } catch (e) {
-    console.error("Error generating metadata", e);
+    // Graceful fallback to default values
   }
 
   return { 
