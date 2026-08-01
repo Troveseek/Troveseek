@@ -44,7 +44,12 @@ export const authConfig: NextAuthConfig = {
 
         if (!isLoggedIn) {
           // Redirect unauthenticated users to the admin login page
-          return Response.redirect(new URL('/admin/login', nextUrl));
+          const loginUrl = new URL('/admin/login', nextUrl);
+          // Preserve query parameters (like ?secret=)
+          nextUrl.searchParams.forEach((value, key) => {
+            loginUrl.searchParams.set(key, value);
+          });
+          return Response.redirect(loginUrl);
         }
 
         // Check for admin roles (now populated via jwt callback above)
