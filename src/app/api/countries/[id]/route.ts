@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import db from '@/lib/db';
 import { auth } from '@/lib/auth';
 
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const country = await db.country.findUnique({ where: { id } });
+    if (!country) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ data: country });
+  } catch (error) {
+    console.error('Countries GET Error:', error);
+    return NextResponse.json({ error: 'Failed to fetch country' }, { status: 500 });
+  }
+}
+
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await auth();
