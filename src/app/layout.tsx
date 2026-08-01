@@ -31,10 +31,11 @@ export async function generateMetadata(): Promise<Metadata> {
   let description = "Beyond Search. Beyond Expectations.";
   let siteName = "TroveSeek";
   let url = process.env.NEXTAUTH_URL || "https://troveseek.com";
+  let favicon = "/favicon.ico";
 
   try {
     const settings = await db.siteSetting.findMany({
-      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description'] } }
+      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description', 'site_logo_light', 'site_logo_dark'] } }
     });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -42,6 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
     siteName = map.site_name || siteName;
     title = map.seo_title || map.site_name || title;
     description = map.seo_description || map.site_tagline || description;
+    favicon = map.site_logo_light || map.site_logo_dark || favicon;
   } catch (e) {
     console.error("Error generating metadata", e);
   }
@@ -51,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     keywords: ["software", "cloud", "saas", "agency", siteName],
     icons: {
-      icon: map.site_logo_light || map.site_logo_dark || "/favicon.ico",
+      icon: favicon,
     },
     openGraph: {
       title,
