@@ -33,6 +33,7 @@ export default function SettingsAdminPage() {
     { id: 'backup', label: 'Backup', icon: HardDrive },
     { id: 'maintenance', label: 'Maintenance', icon: AlertTriangle },
     { id: 'api', label: 'API', icon: Terminal },
+    { id: 'integrations', label: 'Integrations', icon: LinkIcon },
     { id: 'legal', label: 'Legal', icon: Scale },
   ];
 
@@ -616,6 +617,41 @@ export default function SettingsAdminPage() {
 
             <div>
               <Button variant="primary" icon={saving ? <Loader className="spin" size={16} /> : <Save size={16} />} onClick={handleSave} disabled={saving}>Save API Settings</Button>
+            </div>
+          </div>
+        );
+
+      case 'integrations':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxWidth: '600px' }}>
+            <h3 style={{ fontSize: '20px', margin: 0 }}>Third-Party Integrations</h3>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ background: 'var(--clr-surface-elevated)', border: '1px solid var(--clr-border)', borderRadius: '12px', padding: '16px' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#1877F2' }}>Facebook (Meta) Business</h4>
+                <Input label="Meta Pixel ID" value={settings.seo_fb || ''} onChange={e => updateSetting('seo_fb', e.target.value)} placeholder="123456789012345" />
+              </div>
+
+              <div style={{ background: 'var(--clr-surface-elevated)', border: '1px solid var(--clr-border)', borderRadius: '12px', padding: '16px' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', color: 'var(--clr-text)' }}>TikTok Business</h4>
+                <Input label="TikTok Pixel ID" value={settings.seo_tiktok || ''} onChange={e => updateSetting('seo_tiktok', e.target.value)} placeholder="CB0..." />
+              </div>
+
+              <div style={{ background: 'var(--clr-surface-elevated)', border: '1px solid var(--clr-border)', borderRadius: '12px', padding: '16px' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#25D366' }}>WhatsApp Business</h4>
+                <Input label="WhatsApp Phone Number" value={settings.int_whatsapp || ''} onChange={e => updateSetting('int_whatsapp', e.target.value)} placeholder="+1234567890" />
+                <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'var(--clr-text-muted)' }}>Entering a number will enable the floating WhatsApp chat widget.</p>
+              </div>
+
+              <div style={{ background: 'var(--clr-surface-elevated)', border: '1px solid var(--clr-border)', borderRadius: '12px', padding: '16px' }}>
+                <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#DB4437' }}>Google Client</h4>
+                <Input label="Google Client ID (OAuth)" value={settings.int_google_client || ''} onChange={e => updateSetting('int_google_client', e.target.value)} placeholder="12345-abcde.apps.googleusercontent.com" />
+                <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'var(--clr-text-muted)' }}>Required for "Sign in with Google" functionality.</p>
+              </div>
+            </div>
+
+            <div>
+              <Button variant="primary" icon={saving ? <Loader className="spin" size={16} /> : <Save size={16} />} onClick={handleSave} disabled={saving}>Save Integrations</Button>
             </div>
           </div>
         );

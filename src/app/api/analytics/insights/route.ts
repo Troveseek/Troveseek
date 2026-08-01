@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey || apiKey === '') {
-      return NextResponse.json({ error: 'Gemini API key is missing' }, { status: 400 });
+      return NextResponse.json({ error: 'Gemini API key is missing. Add GEMINI_API_KEY to your .env file.' }, { status: 400 });
     }
 
     const body = await req.json();
