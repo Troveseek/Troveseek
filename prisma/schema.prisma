@@ -499,3 +499,29 @@ model Subscription {
   user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   saas                 SaaS      @relation(fields: [saasId], references: [id], onDelete: Cascade)
 }
+
+model Coupon {
+  id        String    @id @default(cuid())
+  code      String    @unique
+  discount  Float
+  type      String    @default("PERCENTAGE") // PERCENTAGE, FIXED
+  appliesTo String    @default("ALL") // ALL, PRODUCTS, SAAS, SERVICES
+  usage     Int       @default(0)
+  maxUsage  Int?
+  expiry    DateTime?
+  status    String    @default("ACTIVE") // ACTIVE, EXPIRED, DISABLED
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Campaign {
+  id        String    @id @default(cuid())
+  subject   String
+  content   String
+  sentAt    DateTime?
+  status    String    @default("DRAFT") // DRAFT, SENT, SCHEDULED
+  openRate  Float     @default(0)
+  clickRate Float     @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
