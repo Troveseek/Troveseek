@@ -1,45 +1,54 @@
 .testimonialsSection {
-  padding: 120px 32px;
+  padding: clamp(64px, 8vw, 120px) clamp(16px, 3vw, 32px);
   background: var(--clr-surface, #0f0f1a);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .container {
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 64px;
+  margin-bottom: clamp(36px, 5vw, 60px);
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: 36px;
-  font-weight: 700;
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 800;
   color: var(--clr-text, #fff);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(16px, 3vw, 32px);
 }
 
 .testimonialCard {
   background: var(--clr-surface-2, #16162a);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--radius-lg, 12px);
-  padding: 32px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg, 16px);
+  padding: clamp(24px, 4vw, 32px);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.testimonialCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(124, 111, 255, 0.4);
 }
 
 .quote {
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 15px;
+  line-height: 1.65;
   color: var(--clr-text-muted, #8888aa);
   font-style: italic;
   flex: 1;
@@ -48,14 +57,15 @@
 .author {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--clr-surface-3), var(--clr-primary));
+  flex-shrink: 0;
 }
 
 .authorInfo {
@@ -66,25 +76,10 @@
 .authorName {
   font-weight: 600;
   color: var(--clr-text, #fff);
-  font-size: 15px;
+  font-size: 14.5px;
 }
 
 .authorRole {
   color: var(--clr-text-muted, #8888aa);
-  font-size: 13px;
-}
-
-@media (max-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  .title {
-    font-size: 28px;
-  }
+  font-size: 12.5px;
 }

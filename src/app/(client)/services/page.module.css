@@ -346,19 +346,28 @@
   .largeCard {
     grid-column: span 1;
   }
+  .pricingGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
   .hero {
-    padding: 32px 16px 48px;
+    padding: clamp(32px, 6vw, 48px) 16px;
+  }
+  .servicesSection {
+    padding: 48px 16px;
+  }
+  .pricingSection {
+    padding: 48px 16px;
   }
   .bentoGrid {
     grid-template-columns: 1fr;
-    padding: 16px;
+    gap: 16px;
   }
   .pricingGrid {
     grid-template-columns: 1fr;
-    padding: 16px;
+    gap: 20px;
   }
   .pricingCard.recommended {
     transform: none;

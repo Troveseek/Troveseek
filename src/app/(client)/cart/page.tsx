@@ -1,14 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { ShoppingCart, Trash2, Tag, ArrowRight, ShieldCheck } from 'lucide-react';
-import { Card, CardBody, CardFooter } from '@/components/ui/Card';
+import { Card, CardBody } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useLocale } from 'next-intl';
+import styles from './page.module.css';
 
 export default function CartPage() {
   const locale = useLocale();
   const isAr = locale === 'ar';
+  
   // Mock data for the cart
   const cartItems = [
     {
@@ -36,59 +38,36 @@ export default function CartPage() {
   const total = subtotal + tax;
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '32px', fontFamily: 'var(--font-display)', fontWeight: 700, marginBottom: '8px' }}>{isAr ? 'عربة التسوق' : 'Your Cart'}</h1>
-        <p style={{ color: 'var(--clr-text-muted)', fontSize: '16px' }}>{isAr ? 'راجع عناصرك قبل الدفع.' : 'Review your items before checkout.'}</p>
+    <div className={styles.cartPage}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>{isAr ? 'عربة التسوق' : 'Your Cart'}</h1>
+        <p className={styles.subtitle}>{isAr ? 'راجع عناصرك قبل الدفع.' : 'Review your items before checkout.'}</p>
       </div>
 
       {cartItems.length > 0 ? (
-        <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+        <div className={styles.cartLayout}>
           {/* Left Column: Cart Items */}
-          <div style={{ flex: '1 1 60%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className={styles.itemsList}>
             {cartItems.map((item) => (
-              <Card key={item.id} style={{ display: 'flex', flexDirection: 'row', gap: '16px', padding: '16px', alignItems: 'center' }}>
-                <div style={{
-                  width: '80px', height: '80px', flexShrink: 0,
+              <Card key={item.id} className={styles.cartItem}>
+                <div className={styles.itemIcon} style={{
                   background: `${item.color}22`,
                   border: `1px solid ${item.color}44`,
-                  borderRadius: '12px',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '28px',
                 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', background: `${item.color}`, borderRadius: '10px' }} />
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', background: `${item.color}`, borderRadius: '10px' }} />
                 </div>
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <span style={{ 
-                    fontSize: '11px', 
-                    fontWeight: 600, 
-                    textTransform: 'uppercase', 
-                    color: 'var(--clr-primary)',
-                    background: 'rgba(124,111,255,0.15)',
-                    padding: '4px 8px',
-                    borderRadius: '999px',
-                    alignSelf: 'flex-start'
-                  }}>
+                <div className={styles.itemDetails}>
+                  <span className={styles.itemCategory}>
                     {item.category}
                   </span>
-                  <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--clr-text)' }}>{item.name}</h3>
-                  <p style={{ fontSize: '13px', color: 'var(--clr-text-muted)' }}>{isAr ? 'النوع:' : 'Type:'} {item.type}</p>
+                  <h3 className={styles.itemName}>{item.name}</h3>
+                  <p className={styles.itemType}>{isAr ? 'النوع:' : 'Type:'} {item.type}</p>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '12px' }}>
-                  <span style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'var(--font-display)' }}>
+                <div className={styles.itemActions}>
+                  <span className={styles.itemPrice}>
                     ${item.price.toFixed(2)}
                   </span>
-                  <button style={{ 
-                    background: 'transparent', 
-                    border: 'none', 
-                    color: 'var(--clr-danger)', 
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '13px',
-                    fontWeight: 500
-                  }}>
+                  <button className={styles.removeBtn}>
                     <Trash2 size={14} />
                     {isAr ? 'إزالة' : 'Remove'}
                   </button>
@@ -98,10 +77,10 @@ export default function CartPage() {
           </div>
 
           {/* Right Column: Order Summary */}
-          <div style={{ flex: '1 1 30%', minWidth: '300px' }}>
-            <Card style={{ position: 'sticky', top: '100px' }}>
-              <CardBody style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <h2 style={{ fontSize: '20px', fontWeight: 600 }}>{isAr ? 'ملخص الطلب' : 'Order Summary'}</h2>
+          <div className={styles.orderSummary}>
+            <Card>
+              <CardBody style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '24px' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: 600, margin: 0 }}>{isAr ? 'ملخص الطلب' : 'Order Summary'}</h2>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--clr-text-muted)', fontSize: '15px' }}>
@@ -132,7 +111,7 @@ export default function CartPage() {
                   </Button>
                 </Link>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--clr-text-muted)', fontSize: '13px', marginTop: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: 'var(--clr-text-muted)', fontSize: '13px', marginTop: '4px' }}>
                   <ShieldCheck size={16} color="var(--clr-success)" />
                   {isAr ? 'دفع آمن' : 'Secure SSL Checkout'}
                 </div>
@@ -141,8 +120,8 @@ export default function CartPage() {
           </div>
         </div>
       ) : (
-        <Card style={{ textAlign: 'center', padding: '64px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--clr-surface-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+        <Card className={styles.emptyState}>
+          <div className={styles.emptyIcon}>
             <ShoppingCart size={40} color="var(--clr-text-muted)" />
           </div>
           <h2 style={{ fontSize: '24px', fontWeight: 600 }}>{isAr ? 'عربة التسوق فارغة' : 'Your cart is empty'}</h2>
