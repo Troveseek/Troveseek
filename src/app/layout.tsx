@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
+import { Montserrat, Cairo, JetBrains_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import "@/styles/admin.css";
 import "@/styles/blocks.css";
 import "@/styles/sections.css";
 import db from "@/lib/db";
 
-const inter = Inter({
-  variable: "--font-body",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   preload: false,
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-display",
-  subsets: ["latin"],
+const cairo = Cairo({
+  variable: "--font-cairo",
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   preload: false,
 });
 
@@ -29,10 +31,11 @@ export async function generateMetadata(): Promise<Metadata> {
   let description = "Beyond Search. Beyond Expectations.";
   let siteName = "TroveSeek";
   let url = process.env.NEXTAUTH_URL || "https://troveseek.com";
+  let faviconUrl = "/favicon.ico";
 
   try {
     const settings = await db.siteSetting.findMany({
-      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description'] } }
+      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description', 'site_logo_light', 'site_logo_dark'] } }
     });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -40,6 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
     siteName = map.site_name || siteName;
     title = map.seo_title || map.site_name || title;
     description = map.seo_description || map.site_tagline || description;
+    faviconUrl = map.site_logo_light || map.site_logo_dark || faviconUrl;
   } catch (e) {
     console.error("Error generating metadata", e);
   }
@@ -48,6 +52,11 @@ export async function generateMetadata(): Promise<Metadata> {
     title, 
     description,
     keywords: ["software", "cloud", "saas", "agency", siteName],
+    icons: {
+      icon: faviconUrl,
+      shortcut: faviconUrl,
+      apple: faviconUrl,
+    },
     openGraph: {
       title,
       description,
@@ -111,7 +120,7 @@ export default async function RootLayout({
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   return (
-    <html lang={locale} dir={dir} className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+    <html lang={locale} dir={dir} className={`${montserrat.variable} ${cairo.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Favicon */}
         <link rel="icon" href={faviconUrl} />

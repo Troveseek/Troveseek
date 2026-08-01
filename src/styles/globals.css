@@ -22,10 +22,11 @@
   --clr-text-muted: #8888aa;
   --clr-text-dim: #44446a;
 
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-arabic: 'Noto Sans Arabic', sans-serif;
+  --font-brand: 'Square 721 Extended Bold', 'Square 721 Bold', 'Square 721 Std', 'Square 721', 'Eurostile Extended', 'Eurostile Bold', 'Eurostile', system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-montserrat), 'Montserrat', sans-serif;
+  --font-body: var(--font-montserrat), 'Montserrat', sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', monospace;
+  --font-arabic: var(--font-cairo), 'Cairo', sans-serif;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -64,10 +65,24 @@ body {
   overflow-x: hidden;
 }
 
+html[dir="rtl"], html[lang="ar"], [dir="rtl"], [dir="rtl"] body {
+  font-family: var(--font-arabic) !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.2;
+}
+
+html[dir="rtl"] h1, html[dir="rtl"] h2, html[dir="rtl"] h3, html[dir="rtl"] h4, html[dir="rtl"] h5, html[dir="rtl"] h6 {
+  font-family: var(--font-arabic) !important;
+}
+
+.font-brand, .brand-text {
+  font-family: var(--font-brand) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
 }
 
 a { color: var(--clr-primary); text-decoration: none; transition: var(--transition); }

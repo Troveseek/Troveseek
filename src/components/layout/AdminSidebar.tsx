@@ -122,14 +122,17 @@ export default function AdminSidebar({ isOpen = false }: AdminSidebarProps) {
   return (
     <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
       <div className={styles.brand}>
-        {siteLogoLight || siteLogoDark ? (
-          <>
-            {siteLogoLight && <img src={siteLogoLight} alt={siteName} className={styles.logoLight} style={{ maxHeight: '32px', objectFit: 'contain' }} />}
-            {siteLogoDark && <img src={siteLogoDark} alt={siteName} className={styles.logoDark} style={{ maxHeight: '32px', objectFit: 'contain', display: 'none' }} />}
-          </>
-        ) : (
-          <h1 className={styles.brandName}>{siteName}</h1>
-        )}
+        <div className={styles.brandLogoWrapper}>
+          {siteLogoLight || siteLogoDark ? (
+            <img
+              src={siteLogoLight || siteLogoDark}
+              alt={siteName}
+              className={styles.brandLogo}
+            />
+          ) : (
+            <h1 className={styles.brandName}>{siteName}</h1>
+          )}
+        </div>
         <p className={styles.brandSubtitle}>Enterprise Admin</p>
       </div>
 

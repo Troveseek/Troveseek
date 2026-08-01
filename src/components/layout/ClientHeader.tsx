@@ -65,10 +65,11 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
       <header className={`${styles.header} ${scrolled ? styles.scrolled : ''}`}>
         <Link href="/" className={styles.logoArea}>
           {siteLogoLight || siteLogoDark ? (
-            <>
-              {siteLogoLight && <img src={siteLogoLight} alt={siteName} className={styles.logoLight} style={{ maxHeight: '32px', objectFit: 'contain' }} />}
-              {siteLogoDark && <img src={siteLogoDark} alt={siteName} className={styles.logoDark} style={{ maxHeight: '32px', objectFit: 'contain', display: 'none' }} />}
-            </>
+            <img
+              src={siteLogoLight || siteLogoDark}
+              alt={siteName}
+              className={styles.logoLight}
+            />
           ) : (
             <div className={styles.logoIcon}>{siteName.charAt(0)}</div>
           )}
