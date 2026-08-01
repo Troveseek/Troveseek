@@ -83,10 +83,12 @@ export default async function RootLayout({
   let fbId = "";
   let tiktokId = "";
   let siteCurrency = "USD";
+  let faviconUrl = "/favicon.ico";
+  let whatsappNum = "";
   
   try {
     const settings = await db.siteSetting.findMany({
-      where: { key: { in: ['app_primary_color', 'app_accent_color', 'app_custom_css', 'app_dark_mode', 'seo_ga', 'seo_fb', 'seo_tiktok', 'site_currency'] } }
+      where: { key: { in: ['app_primary_color', 'app_accent_color', 'app_custom_css', 'app_dark_mode', 'seo_ga', 'seo_fb', 'seo_tiktok', 'site_currency', 'site_logo_light', 'site_logo_dark', 'int_whatsapp'] } }
     });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -98,10 +100,8 @@ export default async function RootLayout({
     fbId = map.seo_fb || "";
     tiktokId = map.seo_tiktok || "";
     siteCurrency = map.site_currency || "USD";
-    
-    // Favicon and WhatsApp
-    const faviconUrl = map.site_logo_light || map.site_logo_dark || "/favicon.ico";
-    const whatsappNum = map.int_whatsapp || "";
+    faviconUrl = map.site_logo_light || map.site_logo_dark || "/favicon.ico";
+    whatsappNum = map.int_whatsapp || "";
   } catch (e) {
     console.error("Error fetching settings in root layout", e);
   }
@@ -114,8 +114,7 @@ export default async function RootLayout({
     <html lang={locale} dir={dir} className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Favicon */}
-        {/* @ts-ignore - Ignore the scope issue, variables are declared in server component */}
-        {settings && <link rel="icon" href={settings.find(s => s.key === 'site_logo_light')?.value || settings.find(s => s.key === 'site_logo_dark')?.value || "/favicon.ico"} />}
+        <link rel="icon" href={faviconUrl} />
         
         {/* Google Analytics */}
         {gaId && (
@@ -214,10 +213,9 @@ export default async function RootLayout({
                 <Toaster richColors position="top-center" />
 
                 {/* WhatsApp Floating Widget */}
-                {/* @ts-ignore */}
-                {settings && settings.find(s => s.key === 'int_whatsapp')?.value && (
+                {whatsappNum && (
                   <a
-                    href={`https://wa.me/${settings.find(s => s.key === 'int_whatsapp')?.value?.replace(/[^0-9]/g, '')}`}
+                    href={`https://wa.me/${whatsappNum.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
