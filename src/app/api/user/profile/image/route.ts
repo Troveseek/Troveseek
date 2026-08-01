@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import db from '@/lib/db';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
 
 export async function POST(req: Request) {
   try {
@@ -21,24 +24,44 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Save to public/uploads
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    
-    // Create directory if it doesn't exist
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (e) {
-      // Ignore if exists
-    }
-
     // Generate unique filename
     const ext = file.name.split('.').pop() || 'png';
     const filename = `avatar_${session.user.id}_${Date.now()}.${ext}`;
-    const filepath = path.join(uploadDir, filename);
+    
+    let imageUrl = '';
 
-    await writeFile(filepath, buffer);
+    if (supabase) {
+      const { data, error } = await supabase
+        .storage
+        .from('uploads')
+        .upload(`avatars/${filename}`, buffer, {
+          contentType: file.type,
+          upsert: false
+        });
 
-    const imageUrl = `/uploads/${filename}`;
+      if (error) {
+        console.error('[Supabase Upload Error]', error);
+        return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
+      }
+
+      const { data: { publicUrl } } = supabase
+        .storage
+        .from('uploads')
+        .getPublicUrl(`avatars/${filename}`);
+      
+      imageUrl = publicUrl;
+    } else {
+      console.warn("Supabase not configured, attempting local upload (WARNING: Ephemeral on Vercel)");
+      const { writeFile, mkdir } = require('fs/promises');
+      const path = require('path');
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+      try {
+        await mkdir(uploadDir, { recursive: true });
+      } catch (e) {}
+      const filepath = path.join(uploadDir, filename);
+      await writeFile(filepath, buffer);
+      imageUrl = `/uploads/${filename}`;
+    }
 
     // Update user in DB
     const user = await db.user.update({
