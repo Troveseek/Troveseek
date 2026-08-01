@@ -28,27 +28,6 @@
   text-decoration: none;
 }
 
-.logoLight, .logoDark {
-  max-height: 32px;
-  object-fit: contain;
-}
-
-/* Light Mode Defaults */
-:global(html[data-theme="light"]) .logoLight {
-  display: block;
-}
-:global(html[data-theme="light"]) .logoDark {
-  display: none;
-}
-
-/* Dark Mode Defaults */
-:global(html[data-theme="dark"]) .logoLight {
-  display: none;
-}
-:global(html[data-theme="dark"]) .logoDark {
-  display: block;
-}
-
 .logoIcon {
   width: 32px;
   height: 32px;

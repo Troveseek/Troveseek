@@ -24,18 +24,15 @@ const jetbrainsMono = JetBrains_Mono({
   preload: false,
 });
 
-export const dynamic = 'force-dynamic';
-
 export async function generateMetadata(): Promise<Metadata> {
   let title = "TroveSeek Ltd";
   let description = "Beyond Search. Beyond Expectations.";
   let siteName = "TroveSeek";
   let url = process.env.NEXTAUTH_URL || "https://troveseek.com";
-  let favicon = "/favicon.ico";
 
   try {
     const settings = await db.siteSetting.findMany({
-      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description', 'site_logo_light', 'site_logo_dark'] } }
+      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description'] } }
     });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -43,7 +40,6 @@ export async function generateMetadata(): Promise<Metadata> {
     siteName = map.site_name || siteName;
     title = map.seo_title || map.site_name || title;
     description = map.seo_description || map.site_tagline || description;
-    favicon = map.site_logo_light || map.site_logo_dark || favicon;
   } catch (e) {
     console.error("Error generating metadata", e);
   }
@@ -52,9 +48,6 @@ export async function generateMetadata(): Promise<Metadata> {
     title, 
     description,
     keywords: ["software", "cloud", "saas", "agency", siteName],
-    icons: {
-      icon: favicon,
-    },
     openGraph: {
       title,
       description,
@@ -120,6 +113,8 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
+        {/* Favicon */}
+        <link rel="icon" href={faviconUrl} />
         
         {/* Google Analytics */}
         {gaId && (
