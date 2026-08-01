@@ -27,15 +27,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  let title = "TroveSeek Ltd";
-  let description = "Beyond Search. Beyond Expectations.";
-  let siteName = "TroveSeek";
-  let url = process.env.NEXTAUTH_URL || "https://troveseek.com";
-  let faviconUrl = "/favicon.ico";
+  let siteName = "TroveSeek - Enterprise Digital Commerce Ecosystem";
+  let title = "TroveSeek - Enterprise Digital Commerce Ecosystem";
+  let description = "Scalable digital ecosystem offering high-performance web products, SaaS subscriptions, and custom engineering services.";
+  let faviconUrl = "/icon.png";
+  let appleIconUrl = "/apple-icon.png";
+  const url = process.env.NEXTAUTH_URL || 'https://troveseek.com';
 
   try {
     const settings = await db.siteSetting.findMany({
-      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description', 'site_logo_light', 'site_logo_dark'] } }
+      where: { key: { in: ['site_name', 'site_tagline', 'seo_title', 'seo_description', 'site_favicon', 'site_logo_light', 'site_logo_dark'] } }
     });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -43,19 +44,25 @@ export async function generateMetadata(): Promise<Metadata> {
     siteName = map.site_name || siteName;
     title = map.seo_title || map.site_name || title;
     description = map.seo_description || map.site_tagline || description;
-    faviconUrl = map.site_logo_light || map.site_logo_dark || faviconUrl;
+    faviconUrl = map.site_favicon || map.site_logo_dark || map.site_logo_light || "/icon.png";
+    appleIconUrl = map.site_favicon || map.site_logo_dark || map.site_logo_light || "/apple-icon.png";
   } catch (e) {
     console.error("Error generating metadata", e);
   }
 
   return { 
+    metadataBase: new URL(url),
     title, 
     description,
     keywords: ["software", "cloud", "saas", "agency", siteName],
     icons: {
-      icon: faviconUrl,
+      icon: [
+        { url: faviconUrl },
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/icon.png', type: 'image/png' },
+      ],
       shortcut: faviconUrl,
-      apple: faviconUrl,
+      apple: appleIconUrl,
     },
     openGraph: {
       title,
@@ -63,11 +70,20 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName,
       url,
       type: "website",
+      images: [
+        {
+          url: '/logo.png',
+          width: 1200,
+          height: 1200,
+          alt: siteName,
+        }
+      ]
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: ['/logo.png'],
     }
   };
 }
@@ -92,12 +108,12 @@ export default async function RootLayout({
   let fbId = "";
   let tiktokId = "";
   let siteCurrency = "USD";
-  let faviconUrl = "/favicon.ico";
+  let faviconUrl = "/icon.png";
   let whatsappNum = "";
   
   try {
     const settings = await db.siteSetting.findMany({
-      where: { key: { in: ['app_primary_color', 'app_accent_color', 'app_custom_css', 'app_dark_mode', 'seo_ga', 'seo_fb', 'seo_tiktok', 'site_currency', 'site_logo_light', 'site_logo_dark', 'int_whatsapp'] } }
+      where: { key: { in: ['app_primary_color', 'app_accent_color', 'app_custom_css', 'app_dark_mode', 'seo_ga', 'seo_fb', 'seo_tiktok', 'site_currency', 'site_favicon', 'site_logo_light', 'site_logo_dark', 'int_whatsapp'] } }
     });
     const map: Record<string, string> = {};
     for (const s of settings) map[s.key] = s.value;
@@ -109,7 +125,7 @@ export default async function RootLayout({
     fbId = map.seo_fb || "";
     tiktokId = map.seo_tiktok || "";
     siteCurrency = map.site_currency || "USD";
-    faviconUrl = map.site_logo_light || map.site_logo_dark || "/favicon.ico";
+    faviconUrl = map.site_favicon || map.site_logo_dark || map.site_logo_light || "/icon.png";
     whatsappNum = map.int_whatsapp || "";
   } catch (e) {
     console.error("Error fetching settings in root layout", e);
@@ -122,8 +138,10 @@ export default async function RootLayout({
   return (
     <html lang={locale} dir={dir} className={`${montserrat.variable} ${cairo.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
-        {/* Favicon */}
-        <link rel="icon" href={faviconUrl} />
+        {/* Favicon & App Icons */}
+        <link rel="icon" type="image/png" sizes="32x32" href={faviconUrl} />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
         
         {/* Google Analytics */}
         {gaId && (
