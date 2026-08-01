@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { SessionProvider } from 'next-auth/react';
 import AdminSidebar from '@/components/layout/AdminSidebar';
 import AdminTopbar from '@/components/layout/AdminTopbar';
+import styles from './layout.module.css';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -16,18 +17,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <SessionProvider>
-      <div style={{ minHeight: '100vh', background: 'var(--clr-bg)', display: 'flex' }}>
-      <AdminSidebar isOpen={sidebarOpen} />
-      <div style={{ flex: 1, marginLeft: '260px', transition: 'margin-left 0.3s ease' }}>
-        <AdminTopbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-        <main style={{ 
-          padding: '88px 32px 32px',
-          minHeight: '100vh'
-        }}>
-          {children}
-        </main>
+      <div className={styles.adminLayout}>
+        <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <div className={styles.adminMainWrapper}>
+          <AdminTopbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
+          <main className={styles.adminContent}>
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
     </SessionProvider>
   );
 }

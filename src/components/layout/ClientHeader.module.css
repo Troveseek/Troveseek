@@ -3,6 +3,7 @@
   top: 0;
   left: 0;
   width: 100%;
+  max-width: 100%;
   height: 72px;
   background: var(--glass-bg, rgba(255, 255, 255, 0.05));
   backdrop-filter: blur(20px);
@@ -11,9 +12,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 32px;
+  padding: 0 clamp(16px, 3vw, 36px);
   z-index: 100;
   transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .scrolled {
@@ -27,11 +29,13 @@
   gap: 12px;
   text-decoration: none;
   max-height: 48px;
+  flex-shrink: 0;
+  margin-inline-end: clamp(16px, 2.5vw, 36px);
 }
 
 .logoLight, .logoDark {
   max-height: 36px;
-  max-width: 180px;
+  max-width: 160px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -39,8 +43,8 @@
 }
 
 .logoIcon {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, var(--clr-primary, #7c6fff), var(--clr-accent, #00e5b0));
   border-radius: var(--radius-md, 8px);
   display: flex;
@@ -49,6 +53,8 @@
   color: #fff;
   font-family: var(--font-brand);
   font-weight: 800;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .wordmark {
@@ -57,11 +63,14 @@
   font-size: 20px;
   color: var(--clr-text, #fff);
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 .nav {
   display: flex;
-  gap: 32px;
+  align-items: center;
+  gap: clamp(12px, 1.8vw, 28px);
+  flex-shrink: 1;
 }
 
 .navLink {
@@ -71,6 +80,7 @@
   text-decoration: none;
   transition: color 0.2s ease;
   position: relative;
+  white-space: nowrap;
 }
 
 .navLink:hover {
@@ -79,6 +89,7 @@
 
 .navLink.active {
   color: var(--clr-text, #fff);
+  font-weight: 600;
 }
 
 .navLink.active::after {
@@ -95,7 +106,8 @@
 .actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: clamp(8px, 1.2vw, 16px);
+  flex-shrink: 0;
 }
 
 .iconBtn {
@@ -109,6 +121,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .iconBtn:hover {
@@ -126,10 +139,47 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .signInBtn:hover {
   background: rgba(255, 255, 255, 0.05);
+  border-color: var(--clr-primary);
+}
+
+.profileLink {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 180px;
+}
+
+.profileAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--clr-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  font-family: var(--font-display);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(124,111,255,0.25);
+}
+
+.profileName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--clr-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
 }
 
 .menuBtn {
@@ -142,7 +192,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   z-index: 1000;
   opacity: 0;
@@ -159,7 +209,7 @@
   position: fixed;
   top: 0;
   right: -320px;
-  width: 320px;
+  width: min(320px, 85vw);
   height: 100vh;
   background: var(--clr-surface, #151520);
   z-index: 1001;
@@ -190,7 +240,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
+  padding: 20px 24px;
   border-bottom: 1px solid var(--glass-border);
 }
 
@@ -214,7 +264,7 @@
 }
 
 .mobileNavLink {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--clr-text-muted);
   text-decoration: none;
@@ -227,7 +277,7 @@
 
 .mobileDrawerFooter {
   margin-top: auto;
-  padding-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--glass-border);
 }
 
@@ -252,7 +302,15 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-@media (max-width: 768px) {
+/* ── Screen Breakpoints ── */
+
+@media (max-width: 1280px) {
+  .profileName {
+    display: none;
+  }
+}
+
+@media (max-width: 1080px) {
   .nav {
     display: none;
   }
@@ -267,15 +325,5 @@
   
   .header {
     padding: 0 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .mobileDrawer {
-    width: 100vw;
-    right: -100vw;
-  }
-  [dir='rtl'] .mobileDrawer {
-    left: -100vw;
   }
 }

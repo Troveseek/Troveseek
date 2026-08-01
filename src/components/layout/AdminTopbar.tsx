@@ -103,11 +103,13 @@ export default function AdminTopbar({ onMenuClick }: AdminTopbarProps) {
 
         <div style={{ position: 'relative' }} ref={profileRef}>
           <div className={styles.userProfile} onClick={() => { setShowProfile(!showProfile); }} style={{ cursor: 'pointer' }}>
-            {session?.user?.image ? (
-               <img src={session.user.image} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
-            ) : (
-               <div className={styles.avatar}>{userInitials}</div>
-            )}
+            <div className={styles.avatar}>
+              {session?.user?.image ? (
+                <img src={session.user.image} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
+              ) : (
+                userInitials
+              )}
+            </div>
           </div>
 
           {showProfile && (

@@ -150,27 +150,14 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
             )}
           </button>
           {session?.user ? (
-            <Link href="/profile" className={styles.desktopOnly} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Link href="/profile" className={`${styles.desktopOnly} ${styles.profileLink}`}>
               <div
                 title={session.user.name || (isAr ? 'الملف الشخصي' : 'Profile')}
+                className={styles.profileAvatar}
                 style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  border: '2px solid var(--clr-primary)',
                   background: session.user.image
                     ? `url(${session.user.image}) center/cover`
                     : 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#fff',
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  fontFamily: 'var(--font-display)',
-                  flexShrink: 0,
-                  boxShadow: '0 2px 8px rgba(124,111,255,0.25)',
                 }}
               >
                 {!session.user.image && (
@@ -179,7 +166,7 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
                     : '?'
                 )}
               </div>
-              <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--clr-text)', whiteSpace: 'nowrap' }}>
+              <span className={styles.profileName}>
                 {session.user.name || 'User'}
               </span>
             </Link>

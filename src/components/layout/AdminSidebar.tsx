@@ -34,9 +34,10 @@ import styles from './AdminSidebar.module.css';
 
 interface AdminSidebarProps {
   isOpen?: boolean;
+  onClose?: () => void;
 }
 
-export default function AdminSidebar({ isOpen = false }: AdminSidebarProps) {
+export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const role = (session?.user as any)?.role || 'EMPLOYEE';
@@ -120,21 +121,24 @@ export default function AdminSidebar({ isOpen = false }: AdminSidebarProps) {
   const filteredBottomLinks = bottomLinks.filter(link => canAccessPath(role, link.href));
 
   return (
-    <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
-      <div className={styles.brand}>
-        <div className={styles.brandLogoWrapper}>
-          {siteLogoLight || siteLogoDark ? (
-            <img
-              src={siteLogoLight || siteLogoDark}
-              alt={siteName}
-              className={styles.brandLogo}
-            />
-          ) : (
-            <h1 className={styles.brandName}>{siteName}</h1>
-          )}
+    <>
+      {isOpen && <div className={styles.overlay} onClick={onClose} />}
+      <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+        <div className={styles.brand}>
+          <div className={styles.brandHeader}>
+            {siteLogoLight || siteLogoDark ? (
+              <img
+                src={siteLogoLight || siteLogoDark}
+                alt={siteName}
+                className={styles.brandLogo}
+              />
+            ) : (
+              <div className={styles.brandIcon}>{siteName.charAt(0)}</div>
+            )}
+            <span className={styles.brandName}>{siteName}</span>
+          </div>
+          <p className={styles.brandSubtitle}>ENTERPRISE ADMIN</p>
         </div>
-        <p className={styles.brandSubtitle}>Enterprise Admin</p>
-      </div>
 
       <nav className={styles.navSection} style={{ flex: 1, overflowY: 'auto' }}>
         {filteredGroups.map((group) => (
@@ -184,5 +188,6 @@ export default function AdminSidebar({ isOpen = false }: AdminSidebarProps) {
         })}
       </div>
     </aside>
+    </>
   );
 }

@@ -3,8 +3,8 @@
    ================================================================ */
 
 /* Layout */
-.admin-body{background:var(--clr-bg);margin:0;padding:0;height:100vh;overflow:hidden}
-.admin-layout{display:flex;height:100vh;width:100vw}
+.admin-body{background:var(--clr-bg);margin:0;padding:0;height:100vh;overflow-x:hidden}
+.admin-layout{display:flex;height:100vh;width:100%;max-width:100%;overflow-x:hidden}
 
 /* Sidebar */
 .sidebar{width:256px;height:100%;display:flex;flex-direction:column;background:var(--clr-surface);border-right:1px solid var(--clr-border);flex-shrink:0}

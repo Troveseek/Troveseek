@@ -170,14 +170,31 @@ export default function SaasPage() {
       </div>
 
       {/* SaaS Grid */}
-      <div id="saas" className="section-padding" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div id="saas" className={styles.contentSection}>
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '64px', color: 'var(--clr-text-muted)' }}>{isAr ? 'جاري تحميل الحلول...' : 'Loading solutions...'}</div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '64px 0', background: 'var(--clr-surface)', borderRadius: '16px', marginBottom: '64px' }}>
-            <LayoutGrid size={48} color="var(--clr-border)" style={{ margin: '0 auto 16px' }} />
-            <h3 style={{ fontSize: '18px', marginBottom: '8px' }}>{isAr ? 'لا توجد حلول' : 'No solutions found'}</h3>
-            <p style={{ color: 'var(--clr-text-muted)' }}>{isAr ? 'حاول تعديل البحث أو الفلاتر.' : 'Try adjusting your search or filters.'}</p>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyIconWrapper}>
+              <LayoutGrid size={32} />
+            </div>
+            <h3 className={styles.emptyTitle}>{isAr ? 'لا توجد حلول مطابقة' : 'No solutions found'}</h3>
+            <p className={styles.emptyDesc}>
+              {isAr
+                ? 'لم نتمكن من العثور على أي منتج SaaS يطابق معايير البحث أو الفلتر المحددة.'
+                : 'We couldn’t find any SaaS products matching your active search query or selected filter.'}
+            </p>
+            {(search || selectedCategory !== 'ALL_CATEGORIES') && (
+              <button
+                className={styles.clearFilterBtn}
+                onClick={() => {
+                  setSearch('');
+                  setSelectedCategory('ALL_CATEGORIES');
+                }}
+              >
+                {isAr ? 'إعادة ضبط الفلاتر' : 'Clear All Filters'}
+              </button>
+            )}
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
