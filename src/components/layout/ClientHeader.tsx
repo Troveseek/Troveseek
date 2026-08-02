@@ -323,22 +323,23 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
           </nav>
           
           <div className={styles.mobileDrawerFooter}>
-            <div className={styles.drawerControlItem}>
-              <div className={styles.drawerControlLabel}>
-                <Globe size={18} color="var(--clr-primary)" />
-                <span>{isAr ? 'اللغة' : 'Language'}</span>
-              </div>
-              <button className={styles.drawerLangBtn} onClick={handleLanguageSwitch}>
-                {locale === 'ar' ? 'English (EN)' : 'العربية (AR)'}
+            <div className={styles.mobileDrawerActions}>
+              <button
+                type="button"
+                className={styles.mobileActionBtn}
+                onClick={handleLanguageSwitch}
+                aria-label={isAr ? 'تغيير اللغة' : 'Change Language'}
+              >
+                <Globe size={18} />
+                <span>{locale === 'ar' ? 'English' : 'العربية'}</span>
               </button>
-            </div>
-            
-            <div className={styles.drawerControlItem}>
-              <div className={styles.drawerControlLabel}>
-                <Sparkles size={18} color="var(--clr-accent)" />
-                <span>{isAr ? 'المظهر' : 'Theme'}</span>
+              
+              <div className={styles.mobileActionTheme}>
+                <ThemeToggle />
+                <span className={styles.mobileActionThemeLabel}>
+                  {isAr ? 'المظهر' : 'Theme'}
+                </span>
               </div>
-              <ThemeToggle />
             </div>
           </div>
         </div>
