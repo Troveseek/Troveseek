@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   User, Package, Monitor, FileText, Heart, Settings, LogOut, 
   CheckCircle2, UploadCloud, Bell, Shield, Loader, MessageSquare, 
-  Send, ChevronDown, ChevronUp, Download, AlertTriangle 
+  Send, ChevronDown, ChevronUp, Download, AlertTriangle, ArrowLeft, ArrowRight
 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -682,7 +682,7 @@ export default function ProfileClient({ user }: { user: UserProps }) {
           )}
 
           {activeTab === 'support' && (
-            <SupportChatPanel userId={user.id} isAr={isAr} />
+            <SupportChatPanel userId={user.id} isAr={isAr} onBack={() => setActiveTab('profile')} />
           )}
 
           {activeTab === 'settings' && (
@@ -751,7 +751,7 @@ export default function ProfileClient({ user }: { user: UserProps }) {
   );
 }
 
-function SupportChatPanel({ userId, isAr }: { userId: string, isAr: boolean }) {
+function SupportChatPanel({ userId, isAr, onBack }: { userId: string, isAr: boolean, onBack?: () => void }) {
   const [chatMessages, setChatMessages] = useState<any[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -822,21 +822,34 @@ function SupportChatPanel({ userId, isAr }: { userId: string, isAr: boolean }) {
         {isAr ? 'تحدث مباشرة مع فريق الدعم لدينا. نرد عادة خلال دقائق.' : 'Chat live with our support team. We typically respond within minutes.'}
       </p>
 
-      <div style={{ border: '1px solid var(--clr-border)', borderRadius: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: 'clamp(420px, 60vh, 560px)' }}>
+      <div className={`${styles.chatContainer} ${styles.chatFullScreenMobile}`}>
         {/* Chat header */}
-        <div style={{ background: 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))', padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <MessageSquare size={18} color="#fff" />
-          <span style={{ color: '#fff', fontWeight: 600, fontFamily: 'var(--font-display)', fontSize: '14px' }}>
-            {isAr ? 'فريق دعم TroveSeek' : 'TroveSeek Support Team'}
-          </span>
-          <span style={{ marginLeft: isAr ? 'unset' : 'auto', marginRight: isAr ? 'auto' : 'unset', fontSize: '12px', color: 'rgba(255,255,255,0.9)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00e5b0', display: 'inline-block' }}></span>
+        <div className={styles.chatHeader}>
+          {onBack && (
+            <button
+              type="button"
+              className={styles.chatBackBtn}
+              onClick={onBack}
+              aria-label={isAr ? 'الرجوع للملف الشخصي' : 'Back to Profile'}
+            >
+              {isAr ? <ArrowRight size={15} /> : <ArrowLeft size={15} />}
+              <span>{isAr ? 'رجوع' : 'Back'}</span>
+            </button>
+          )}
+
+          <div className={styles.chatTitleArea}>
+            <MessageSquare size={18} />
+            <span>{isAr ? 'فريق دعم TroveSeek' : 'TroveSeek Support Team'}</span>
+          </div>
+
+          <span className={styles.chatOnlineStatus}>
+            <span className={styles.chatStatusDot}></span>
             {isAr ? 'متصل الآن' : 'Online'}
           </span>
         </div>
 
         {/* Messages */}
-        <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', background: 'var(--clr-surface)' }}>
+        <div className={styles.chatMessages}>
           {isConnecting ? (
             <div style={{ textAlign: 'center', color: 'var(--clr-text-muted)', margin: 'auto', fontSize: '14px' }}>
               <Loader size={22} className="spin" style={{ margin: '0 auto 8px', opacity: 0.6 }} />
@@ -875,25 +888,20 @@ function SupportChatPanel({ userId, isAr }: { userId: string, isAr: boolean }) {
         </div>
 
         {/* Input */}
-        <form onSubmit={sendMessage} style={{ padding: '12px 14px', borderTop: '1px solid var(--clr-border)', display: 'flex', gap: '8px', background: 'var(--clr-surface-2)' }}>
+        <form onSubmit={sendMessage} className={styles.chatInputForm}>
           <input
             type="text"
             value={chatInput}
             onChange={e => setChatInput(e.target.value)}
             placeholder={isAr ? 'اكتب رسالتك هنا...' : 'Type a message...'}
-            style={{
-              flex: 1, background: 'var(--clr-surface)', border: '1px solid var(--clr-border)',
-              borderRadius: '24px', padding: '9px 16px', color: 'var(--clr-text)',
-              outline: 'none', fontSize: '14px'
-            }}
+            className={styles.chatInput}
           />
-          <button type="submit" disabled={!chatInput.trim()} style={{
-            width: '38px', height: '38px', borderRadius: '50%',
-            background: chatInput.trim() ? 'var(--clr-primary)' : 'var(--clr-surface-3)',
-            color: '#fff', border: 'none', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', cursor: chatInput.trim() ? 'pointer' : 'default',
-            transition: 'all 0.2s', flexShrink: 0
-          }}>
+          <button
+            type="submit"
+            disabled={!chatInput.trim()}
+            className={styles.chatSendBtn}
+            aria-label={isAr ? 'إرسال' : 'Send'}
+          >
             <Send size={15} style={{ marginLeft: isAr ? 0 : '2px', marginRight: isAr ? '2px' : 0 }} />
           </button>
         </form>

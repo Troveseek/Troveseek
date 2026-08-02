@@ -2,11 +2,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { MessageSquare, X, Send, Minimize2, Maximize2 } from 'lucide-react';
-import Button from './Button';
+import { useLocale } from 'next-intl';
+import { MessageSquare, X, Send, Minimize2, Maximize2, ArrowLeft, ArrowRight } from 'lucide-react';
+import styles from './LiveChatWidget.module.css';
 
 export default function LiveChatWidget() {
   const { data: session } = useSession();
+  const locale = useLocale();
+  const isAr = locale === 'ar';
+  
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
@@ -18,7 +22,10 @@ export default function LiveChatWidget() {
 
   // Listen for external trigger (e.g., from ContactPreview "Live Chat" button)
   useEffect(() => {
-    const handler = () => setIsOpen(true);
+    const handler = () => {
+      setIsOpen(true);
+      setIsMinimized(false);
+    };
     window.addEventListener('open-live-chat', handler);
     return () => window.removeEventListener('open-live-chat', handler);
   }, []);
@@ -58,7 +65,7 @@ export default function LiveChatWidget() {
       };
       initChat();
     }
-  }, [isOpen, sessionId, session]);
+  }, [isOpen, sessionId, session, isConnecting]);
 
   // Subscribe to SSE
   useEffect(() => {
@@ -118,27 +125,12 @@ export default function LiveChatWidget() {
       {/* Floating Button */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          style={{
-            position: 'fixed',
-            bottom: '24px',
-            right: '24px',
-            width: '60px',
-            height: '60px',
-            borderRadius: '50%',
-            background: 'var(--clr-primary)',
-            color: '#fff',
-            border: 'none',
-            boxShadow: '0 8px 24px rgba(124,111,255,0.4)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-            transition: 'transform 0.2s',
+          onClick={() => {
+            setIsOpen(true);
+            setIsMinimized(false);
           }}
-          onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+          className={styles.floatingBtn}
+          aria-label={isAr ? 'محادثة الدعم' : 'Live Chat Support'}
         >
           <MessageSquare size={24} />
         </button>
@@ -146,42 +138,49 @@ export default function LiveChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div style={{
-          position: 'fixed',
-          bottom: isMinimized ? '24px' : '24px',
-          right: '24px',
-          width: '350px',
-          height: isMinimized ? '60px' : '500px',
-          background: 'var(--clr-surface)',
-          border: '1px solid var(--clr-border)',
-          borderRadius: '16px',
-          boxShadow: '0 12px 48px rgba(0,0,0,0.15)',
-          display: 'flex',
-          flexDirection: 'column',
-          zIndex: 9999,
-          overflow: 'hidden',
-          transition: 'height 0.3s ease',
-        }}>
+        <div className={`${styles.chatWindow} ${isMinimized ? styles.minimized : ''}`}>
           {/* Header */}
-          <div style={{
-            background: 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))',
-            color: '#fff',
-            padding: '16px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            cursor: 'pointer'
-          }} onClick={() => setIsMinimized(!isMinimized)}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <MessageSquare size={18} />
-              <span style={{ fontWeight: 600, fontFamily: 'var(--font-display)' }}>TroveSeek Support</span>
-            </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={(e) => { e.stopPropagation(); setIsMinimized(!isMinimized); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}>
-                {isMinimized ? <Maximize2 size={16} /> : <Minimize2 size={16} />}
+          <div 
+            className={styles.chatHeader}
+            onClick={() => setIsMinimized(!isMinimized)}
+          >
+            <div className={styles.headerLeft}>
+              <button 
+                className={styles.headerBtn}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                aria-label={isAr ? 'إغلاق أو رجوع' : 'Back or Close'}
+                title={isAr ? 'رجوع' : 'Back'}
+              >
+                {isAr ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}
               </button>
-              <button onClick={(e) => { e.stopPropagation(); setIsOpen(false); }} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer' }}>
-                <X size={18} />
+              <span className={styles.headerTitle}>
+                {isAr ? 'دعم TroveSeek المباشر' : 'TroveSeek Support'}
+              </span>
+            </div>
+            
+            <div className={styles.headerActions}>
+              <button 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  setIsMinimized(!isMinimized); 
+                }} 
+                className={styles.headerBtn}
+                aria-label={isMinimized ? 'Maximize' : 'Minimize'}
+              >
+                {isMinimized ? <Maximize2 size={15} /> : <Minimize2 size={15} />}
+              </button>
+              <button 
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  setIsOpen(false); 
+                }} 
+                className={styles.headerBtn}
+                aria-label="Close"
+              >
+                <X size={16} />
               </button>
             </div>
           </div>
@@ -189,32 +188,30 @@ export default function LiveChatWidget() {
           {!isMinimized && (
             <>
               {/* Messages Area */}
-              <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--clr-surface-2)' }}>
+              <div className={styles.messagesArea}>
                 {isConnecting ? (
-                  <div style={{ textAlign: 'center', color: 'var(--clr-text-muted)', marginTop: '20px', fontSize: '14px' }}>Connecting to support...</div>
+                  <div style={{ textAlign: 'center', color: 'var(--clr-text-muted)', margin: 'auto', fontSize: '13px' }}>
+                    {isAr ? 'جاري الاتصال بفريق الدعم...' : 'Connecting to support...'}
+                  </div>
                 ) : messages.length === 0 ? (
-                  <div style={{ textAlign: 'center', color: 'var(--clr-text-muted)', marginTop: '20px', fontSize: '14px' }}>
-                    Send a message to start chatting with our team.
+                  <div style={{ textAlign: 'center', color: 'var(--clr-text-muted)', margin: 'auto', fontSize: '13px' }}>
+                    <MessageSquare size={32} style={{ margin: '0 auto 8px', opacity: 0.3 }} />
+                    <p style={{ margin: 0, fontWeight: 600 }}>{isAr ? 'أهلاً بك!' : 'Welcome!'}</p>
+                    <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--clr-text-muted)' }}>
+                      {isAr ? 'أرسل رسالة لبدء المحادثة مع فريقنا.' : 'Send a message to start chatting with our team.'}
+                    </p>
                   </div>
                 ) : (
                   messages.map(msg => {
                     const isMine = msg.senderRole === 'CLIENT';
                     return (
-                      <div key={msg.id} style={{ display: 'flex', justifyContent: isMine ? 'flex-end' : 'flex-start' }}>
-                        <div style={{
-                          maxWidth: '80%',
-                          padding: '10px 14px',
-                          borderRadius: '12px',
-                          background: isMine ? 'var(--clr-primary)' : 'var(--clr-surface)',
-                          color: isMine ? '#fff' : 'var(--clr-text)',
-                          border: isMine ? 'none' : '1px solid var(--clr-border)',
-                          fontSize: '14px',
-                          lineHeight: 1.5,
-                          borderBottomRightRadius: isMine ? '4px' : '12px',
-                          borderBottomLeftRadius: isMine ? '12px' : '4px',
-                        }}>
+                      <div 
+                        key={msg.id} 
+                        className={`${styles.msgRow} ${isMine ? styles.msgRowMine : styles.msgRowOther}`}
+                      >
+                        <div className={`${styles.msgBubble} ${isMine ? styles.msgBubbleMine : styles.msgBubbleOther}`}>
                           {msg.content}
-                          <div style={{ fontSize: '10px', marginTop: '4px', opacity: 0.7, textAlign: isMine ? 'right' : 'left' }}>
+                          <div className={styles.msgTime}>
                             {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </div>
@@ -226,41 +223,21 @@ export default function LiveChatWidget() {
               </div>
 
               {/* Input Area */}
-              <form onSubmit={sendMessage} style={{ padding: '16px', borderTop: '1px solid var(--clr-border)', display: 'flex', gap: '8px', background: 'var(--clr-surface)' }}>
+              <form onSubmit={sendMessage} className={styles.inputArea}>
                 <input
                   type="text"
                   value={input}
                   onChange={e => setInput(e.target.value)}
-                  placeholder="Type a message..."
-                  style={{
-                    flex: 1,
-                    background: 'var(--clr-surface-2)',
-                    border: '1px solid var(--clr-border)',
-                    borderRadius: '24px',
-                    padding: '10px 16px',
-                    color: 'var(--clr-text)',
-                    outline: 'none',
-                    fontSize: '14px'
-                  }}
+                  placeholder={isAr ? 'اكتب رسالتك...' : 'Type a message...'}
+                  className={styles.inputField}
                 />
                 <button
                   type="submit"
                   disabled={!input.trim()}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: input.trim() ? 'var(--clr-primary)' : 'var(--clr-surface-3)',
-                    color: '#fff',
-                    border: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: input.trim() ? 'pointer' : 'default',
-                    transition: 'background 0.2s'
-                  }}
+                  className={styles.sendBtn}
+                  aria-label={isAr ? 'إرسال' : 'Send'}
                 >
-                  <Send size={16} style={{ marginLeft: '2px' }} />
+                  <Send size={15} style={{ marginLeft: isAr ? 0 : '2px', marginRight: isAr ? '2px' : 0 }} />
                 </button>
               </form>
             </>

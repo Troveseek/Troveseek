@@ -150,28 +150,8 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
             )}
           </button>
 
-          {/* Profile / Sign-in */}
-          {session?.user ? (
-            <Link href="/profile" className={styles.profileLink} title={session.user.name || (isAr ? 'الملف الشخصي' : 'Profile')}>
-              <div
-                className={styles.profileAvatar}
-                style={{
-                  background: session.user.image
-                    ? `url(${session.user.image}) center/cover`
-                    : 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))',
-                }}
-              >
-                {!session.user.image && (
-                  session.user.name
-                    ? session.user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
-                    : '?'
-                )}
-              </div>
-              <span className={`${styles.profileName} ${styles.desktopOnly}`}>
-                {session.user.name || 'User'}
-              </span>
-            </Link>
-          ) : (
+          {/* Sign-in button for guests (Profile pic removed from header bar as requested) */}
+          {!session?.user && (
             <Link href="/login" className={styles.headerAuthLink}>
               <button className={styles.signInBtn}>
                 <UserIcon size={15} />
@@ -343,18 +323,22 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
           </nav>
           
           <div className={styles.mobileDrawerFooter}>
-            <div className={styles.mobileDrawerActions}>
-              <button className={styles.footerActionItem} onClick={handleLanguageSwitch}>
-                <Globe size={18} />
-                <span>{locale === 'ar' ? 'English (EN)' : 'العربية (AR)'}</span>
-              </button>
-              
-              <div className={styles.footerActionItem}>
-                <ThemeToggle />
-                <span style={{ marginLeft: '4px' }}>
-                  {isAr ? 'المظهر' : 'Theme'}
-                </span>
+            <div className={styles.drawerControlItem}>
+              <div className={styles.drawerControlLabel}>
+                <Globe size={18} color="var(--clr-primary)" />
+                <span>{isAr ? 'اللغة' : 'Language'}</span>
               </div>
+              <button className={styles.drawerLangBtn} onClick={handleLanguageSwitch}>
+                {locale === 'ar' ? 'English (EN)' : 'العربية (AR)'}
+              </button>
+            </div>
+            
+            <div className={styles.drawerControlItem}>
+              <div className={styles.drawerControlLabel}>
+                <Sparkles size={18} color="var(--clr-accent)" />
+                <span>{isAr ? 'المظهر' : 'Theme'}</span>
+              </div>
+              <ThemeToggle />
             </div>
           </div>
         </div>
