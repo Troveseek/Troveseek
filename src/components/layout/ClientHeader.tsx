@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Globe, ShoppingCart, Heart, Menu, X } from 'lucide-react';
+import { Globe, ShoppingCart, Heart, Menu, X, User as UserIcon, LogOut, Sparkles, ChevronRight, Package, Headset } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import CartDrawer from '../ui/CartDrawer';
 import NotificationDropdown from '../ui/NotificationDropdown';
 import ClientSearch from '../ui/ClientSearch';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useWishlistStore } from '@/lib/store/wishlistStore';
 import styles from './ClientHeader.module.css';
@@ -149,10 +149,11 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
               </span>
             )}
           </button>
+
+          {/* Profile / Sign-in */}
           {session?.user ? (
-            <Link href="/profile" className={`${styles.desktopOnly} ${styles.profileLink}`}>
+            <Link href="/profile" className={styles.profileLink} title={session.user.name || (isAr ? 'الملف الشخصي' : 'Profile')}>
               <div
-                title={session.user.name || (isAr ? 'الملف الشخصي' : 'Profile')}
                 className={styles.profileAvatar}
                 style={{
                   background: session.user.image
@@ -166,16 +167,20 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
                     : '?'
                 )}
               </div>
-              <span className={styles.profileName}>
+              <span className={`${styles.profileName} ${styles.desktopOnly}`}>
                 {session.user.name || 'User'}
               </span>
             </Link>
           ) : (
-            <Link href="/login" className={styles.desktopOnly}>
-              <button className={styles.signInBtn}>{isAr ? 'تسجيل الدخول' : 'Sign In'}</button>
+            <Link href="/login" className={styles.headerAuthLink}>
+              <button className={styles.signInBtn}>
+                <UserIcon size={15} />
+                <span>{isAr ? 'تسجيل الدخول' : 'Sign In'}</span>
+              </button>
             </Link>
           )}
-          <button className={`${styles.iconBtn} ${styles.menuBtn}`} onClick={() => setMobileMenuOpen(true)}>
+
+          <button className={`${styles.iconBtn} ${styles.menuBtn}`} onClick={() => setMobileMenuOpen(true)} aria-label="Open Menu">
             <Menu size={24} />
           </button>
         </div>
@@ -188,12 +193,87 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
       <div className={`${styles.mobileDrawer} ${mobileMenuOpen ? styles.mobileDrawerOpen : ''}`}>
         <div className={styles.mobileDrawerHeader}>
           <span className={styles.wordmark}>{siteName}</span>
-          <button className={styles.iconBtn} onClick={() => setMobileMenuOpen(false)}>
+          <button className={styles.iconBtn} onClick={() => setMobileMenuOpen(false)} aria-label="Close Menu">
             <X size={24} />
           </button>
         </div>
         
         <div className={styles.mobileDrawerContent}>
+          {/* Drawer Top User Card or Auth CTA */}
+          {session?.user ? (
+            <div className={styles.drawerUserCard}>
+              <div className={styles.drawerUserTop}>
+                <div
+                  className={styles.drawerAvatar}
+                  style={{
+                    background: session.user.image
+                      ? `url(${session.user.image}) center/cover`
+                      : 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))',
+                  }}
+                >
+                  {!session.user.image && (
+                    session.user.name
+                      ? session.user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+                      : '?'
+                  )}
+                </div>
+                <div className={styles.drawerUserInfo}>
+                  <div className={styles.drawerUserName}>{session.user.name || 'User'}</div>
+                  <div className={styles.drawerUserEmail}>{session.user.email}</div>
+                </div>
+              </div>
+
+              <div className={styles.drawerUserActions}>
+                <Link
+                  href="/profile"
+                  className={styles.drawerProfileLink}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <UserIcon size={15} />
+                  <span>{isAr ? 'الملف الشخصي' : 'My Profile'}</span>
+                </Link>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    signOut({ callbackUrl: '/login' });
+                  }}
+                  className={styles.drawerLogoutBtn}
+                  title={isAr ? 'تسجيل الخروج' : 'Sign Out'}
+                >
+                  <LogOut size={15} />
+                  <span>{isAr ? 'خروج' : 'Logout'}</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.drawerAuthCard}>
+              <div className={styles.drawerAuthTitle}>
+                <Sparkles size={16} className={styles.drawerSparkle} />
+                <span>{isAr ? 'أهلاً بك في ' + siteName : 'Welcome to ' + siteName}</span>
+              </div>
+              <p className={styles.drawerAuthSub}>
+                {isAr ? 'سجّل الدخول للوصول إلى طلباتك وتنزيلاتك' : 'Sign in to access your orders, downloads & licenses'}
+              </p>
+              <div className={styles.drawerAuthButtons}>
+                <Link
+                  href="/login"
+                  className={styles.drawerPrimaryBtn}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <UserIcon size={16} />
+                  <span>{isAr ? 'تسجيل الدخول' : 'Sign In'}</span>
+                </Link>
+                <Link
+                  href="/register"
+                  className={styles.drawerSecondaryBtn}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>{isAr ? 'إنشاء حساب جديد' : 'Create Account'}</span>
+                </Link>
+              </div>
+            </div>
+          )}
+
           <div className={styles.mobileSearchWrapper}>
             <ClientSearch />
           </div>
@@ -206,55 +286,76 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
                 className={`${styles.mobileNavLink} ${pathname === link.href ? styles.active : ''}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {link.name}
+                <span>{link.name}</span>
+                <ChevronRight size={16} opacity={0.5} />
               </Link>
             ))}
+
+            {session?.user && (
+              <>
+                <Link
+                  href="/profile?tab=orders"
+                  className={styles.mobileNavLink}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Package size={16} color="var(--clr-primary)" />
+                    {isAr ? 'طلباتي' : 'My Orders'}
+                  </span>
+                  <ChevronRight size={16} opacity={0.5} />
+                </Link>
+                <Link
+                  href="/profile?tab=support"
+                  className={styles.mobileNavLink}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Headset size={16} color="var(--clr-accent)" />
+                    {isAr ? 'محادثة الدعم' : 'Support Chat'}
+                  </span>
+                  <ChevronRight size={16} opacity={0.5} />
+                </Link>
+              </>
+            )}
+
+            <Link
+              href="/favorites"
+              className={styles.mobileNavLink}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Heart size={16} color="#ef4444" />
+                {isAr ? 'المفضلة' : 'Favorites'}
+              </span>
+              {wishlistCount > 0 && (
+                <span style={{
+                  background: '#ef4444',
+                  color: 'white',
+                  borderRadius: '999px',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  padding: '1px 7px',
+                }}>
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
           </nav>
           
           <div className={styles.mobileDrawerFooter}>
             <div className={styles.mobileDrawerActions}>
-              <button className={styles.iconBtn} onClick={handleLanguageSwitch} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px' }}>
-                <Globe size={20} />
-                <span style={{ fontSize: '14px', fontWeight: 600 }}>{locale.toUpperCase()}</span>
+              <button className={styles.footerActionItem} onClick={handleLanguageSwitch}>
+                <Globe size={18} />
+                <span>{locale === 'ar' ? 'English (EN)' : 'العربية (AR)'}</span>
               </button>
               
-              <div style={{ padding: '12px', display: 'flex', alignItems: 'center' }}>
+              <div className={styles.footerActionItem}>
                 <ThemeToggle />
-                <span style={{ fontSize: '14px', fontWeight: 600, marginLeft: '8px' }}>
+                <span style={{ marginLeft: '4px' }}>
                   {isAr ? 'المظهر' : 'Theme'}
                 </span>
               </div>
             </div>
-            
-            {session?.user ? (
-              <Link href="/profile" className={styles.mobileProfileBtn} onClick={() => setMobileMenuOpen(false)}>
-                <div
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    background: session.user.image ? `url(${session.user.image}) center/cover` : 'var(--clr-primary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {!session.user.image && session.user.name ? session.user.name.charAt(0).toUpperCase() : '?'}
-                </div>
-                <div>
-                  <div style={{ fontWeight: 600, color: 'var(--clr-text)' }}>{session.user.name}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--clr-text-muted)' }}>{isAr ? 'عرض الملف الشخصي' : 'View Profile'}</div>
-                </div>
-              </Link>
-            ) : (
-              <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                <button className={styles.signInBtn} style={{ width: '100%', marginTop: '16px' }}>
-                  {isAr ? 'تسجيل الدخول' : 'Sign In'}
-                </button>
-              </Link>
-            )}
           </div>
         </div>
       </div>

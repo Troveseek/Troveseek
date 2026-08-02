@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import db from '@/lib/db';
@@ -76,5 +77,10 @@ export default async function ProfilePage() {
     }))
   };
 
-  return <ProfileClient user={userProps} />;
+  return (
+    <Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>}>
+      <ProfileClient user={userProps} />
+    </Suspense>
+  );
 }
+

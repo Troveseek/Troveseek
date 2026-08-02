@@ -202,3 +202,11 @@ html:not(.dark) .logoLight { display: block !important; }
 html:not(.dark) .logoDark { display: none !important; }
 html.dark .logoLight { display: none !important; }
 html.dark .logoDark { display: block !important; }
+
+/* --- Hide Google reCAPTCHA Badge --- */
+.grecaptcha-badge {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
