@@ -188,6 +188,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = user.role;
         token.department = user.department;
         token.loginTime = Date.now();
+      } else if (token.id) {
+        // --- Security Check: Ensure user still exists and is active ---
+        const dbUser = await db.user.findUnique({
+          where: { id: token.id as string },
+          select: { isActive: true, role: true, department: true }
+        });
+
+        if (!dbUser || !dbUser.isActive) {
+          token.expired = true; // Invalidate the session
+        } else {
+          // Sync role and department in case they changed in the DB
+          token.role = dbUser.role;
+          token.department = dbUser.department;
+        }
       }
 
       // --- Security: Dynamic Session Timeout ---
