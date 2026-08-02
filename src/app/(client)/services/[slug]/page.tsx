@@ -213,6 +213,11 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                     <h3 style={{ fontSize: '20px', fontWeight: 600, marginBottom: '8px' }}>{plan.name}</h3>
                     <p style={{ fontSize: '14px', color: 'var(--clr-text-muted)', marginBottom: '24px', lineHeight: 1.5 }}>{plan.description}</p>
                     <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '40px', color: plan.isPopular ? 'var(--clr-primary)' : 'var(--clr-text)', lineHeight: 1 }}>{formatPrice(parseFloat(plan.price.toString().replace(/[^0-9.]/g, '') || '0'))}</div>
+                    {plan.priceDzd && (
+                      <div style={{ fontSize: '18px', color: 'var(--clr-text-muted)', marginTop: '4px', fontWeight: 500 }}>
+                        {new Intl.NumberFormat(isAr ? 'ar-DZ' : 'en-DZ').format(plan.priceDzd)} DZD
+                      </div>
+                    )}
                     {plan.duration && <div style={{ fontSize: '13px', color: 'var(--clr-text-muted)', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={13} /> {plan.duration}</div>}
                   </div>
                   <div style={{ padding: '32px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
