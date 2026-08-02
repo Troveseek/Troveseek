@@ -1,7 +1,7 @@
 .hero {
   position: relative;
-  padding: clamp(64px, 10vw, 130px) clamp(16px, 4vw, 32px);
-  min-height: clamp(480px, 65vh, 720px);
+  padding: clamp(48px, 6vh, 88px) clamp(16px, 3vw, 32px);
+  min-height: clamp(380px, 50vh, 580px);
   overflow: hidden;
   text-align: center;
   display: flex;
@@ -16,7 +16,7 @@
 }
 
 .container {
-  max-width: 920px;
+  max-width: 860px;
   width: 100%;
   margin: 0 auto;
   position: relative;
@@ -26,12 +26,12 @@
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 5.5vw, 4.2rem);
+  font-size: clamp(1.9rem, 3.4vw + 0.5rem, 3.3rem);
   font-weight: 800;
   line-height: 1.15;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   color: var(--clr-text, #fff);
-  margin-bottom: clamp(16px, 3vw, 24px);
+  margin-bottom: clamp(12px, 2vh, 18px);
   text-wrap: balance;
 }
 
@@ -42,11 +42,11 @@
 }
 
 .subtitle {
-  font-size: clamp(15px, 2vw, 19px);
+  font-size: clamp(14px, 1.1vw + 0.2rem, 16.5px);
   color: var(--clr-text-muted, #8888aa);
-  line-height: 1.65;
-  margin-bottom: clamp(32px, 5vw, 48px);
-  max-width: 640px;
+  line-height: 1.6;
+  margin-bottom: clamp(20px, 3vh, 32px);
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
   text-wrap: pretty;
@@ -56,7 +56,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -71,3 +71,4 @@
     box-sizing: border-box;
   }
 }
+

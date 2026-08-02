@@ -3,9 +3,9 @@
   align-items: center;
   background: var(--clr-surface);
   border: 1px solid var(--clr-border);
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 99px;
-  width: 240px;
+  width: clamp(130px, 12vw, 210px);
   cursor: pointer;
   transition: all 0.2s ease;
 }

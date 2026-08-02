@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db';
+import { notifyAdmins } from '@/lib/notifications';
 
 // GET — Public: Fetch spec for signing (no auth)
 export async function GET(req: Request, { params }: { params: Promise<{ token: string }> }) {
@@ -124,6 +125,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ token: 
         signerName: data.signerName,
         signerIp: ip,
       },
+    });
+
+    // Notify administrators immediately
+    await notifyAdmins({
+      title: 'Contract Signed',
+      message: `${data.signerName} signed proposal #${spec.specNumber} (${spec.title})`,
+      type: 'SUCCESS',
+      link: `/admin/tech-specs/${spec.id}`,
     });
 
     return NextResponse.json({ success: true, message: 'Document signed successfully' });

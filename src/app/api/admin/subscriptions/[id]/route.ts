@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/lib/db';
 import { auth } from '@/lib/auth';
+import { sendNotification } from '@/lib/notifications';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_mock', {
@@ -39,6 +40,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         data: { status: 'CANCELED', currentPeriodEnd: new Date() }, // Instant cancellation for admin action
       });
 
+      await sendNotification({
+        userId: subscription.userId,
+        title: 'Subscription Cancelled',
+        message: `Your ${subscription.planName} subscription has been cancelled.`,
+        type: 'WARNING',
+        link: '/profile?tab=subscriptions',
+      });
+
       return NextResponse.json({ success: true, data: updated });
     }
 
@@ -51,6 +60,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         where: { id },
         data: { currentPeriodEnd: newEnd, status: 'ACTIVE' },
       });
+
+      await sendNotification({
+        userId: subscription.userId,
+        title: 'Subscription Extended',
+        message: `Your ${subscription.planName} subscription has been extended by 30 days.`,
+        type: 'SUCCESS',
+        link: '/profile?tab=subscriptions',
+      });
+
       return NextResponse.json({ success: true, data: updated });
     }
 
@@ -73,6 +91,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           currentPeriodEnd: currentEnd
         },
       });
+
+      await sendNotification({
+        userId: subscription.userId,
+        title: 'Subscription Activated! 🎉',
+        message: `Your ${subscription.planName} plan is now active. Enjoy all features!`,
+        type: 'SUCCESS',
+        link: '/profile?tab=subscriptions',
+      });
+
       return NextResponse.json({ success: true, data: updated });
     }
 

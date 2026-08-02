@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import db from '@/lib/db';
+import { notifyAdmins } from '@/lib/notifications';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -40,6 +41,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         saasId: id,
         isApproved: false, // Pending moderation
       },
+    });
+
+    // Notify admins of new SaaS review
+    await notifyAdmins({
+      title: 'New SaaS Review',
+      message: `${authorName} reviewed "${saas.name}" (${rating}/5 stars)`,
+      type: 'INFO',
+      link: '/admin/reviews',
     });
 
     return NextResponse.json({ data: review, message: 'Review submitted for moderation!' }, { status: 201 });

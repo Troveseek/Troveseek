@@ -30,14 +30,14 @@ export async function FeaturedProducts() {
     <section className="section-padding" style={{ background: 'var(--clr-bg)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '48px', flexWrap: 'wrap', gap: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'clamp(24px, 3.5vw, 40px)', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px' }}>
+            <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>
               {isAr ? 'المتجر الرقمي' : 'Digital Shop'}
             </div>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700 }}>{isAr ? 'منتجات مميزة' : 'Featured Products'}</h2>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(22px, 2.4vw + 6px, 32px)', fontWeight: 700, margin: 0 }}>{isAr ? 'منتجات مميزة' : 'Featured Products'}</h2>
           </div>
-          <Link href="/shop" style={{ color: 'var(--clr-primary)', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Link href="/shop" style={{ color: 'var(--clr-primary)', fontWeight: 600, fontSize: '14px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
             {isAr ? 'عرض كل المنتجات ←' : 'View All Products →'}
           </Link>
         </div>

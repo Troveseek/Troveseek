@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import db from '@/lib/db';
 import { chatEmitter } from '@/lib/chatEventEmitter';
+import { sendNotification, notifyAdmins } from '@/lib/notifications';
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -46,12 +47,31 @@ export async function POST(req: Request) {
     data: { updatedAt: new Date() }
   });
 
-  // Emit event to stream
+  // Emit event to chat stream
   chatEmitter.emit(sessionId, message);
 
-  // If client sent this, notify ADMIN stream. If admin sent, notify client (already handled by emitting to sessionId)
+  // If client sent this, notify ADMIN stream & send admin in-app notification
   if (!isAdmin) {
     chatEmitter.emit('ADMIN', { ...message, _sessionUpdate: sessionId });
+    
+    // In-app notification for Admins
+    await notifyAdmins({
+      title: 'New Support Message',
+      message: `${session.user.name || 'A customer'} sent a message: "${content.length > 50 ? content.slice(0, 50) + '...' : content}"`,
+      type: 'INFO',
+      link: `/admin/support`,
+    });
+  } else {
+    // Admin replied -> Notify the client in-app
+    if (chatSession.userId) {
+      await sendNotification({
+        userId: chatSession.userId,
+        title: 'Support Team Replied',
+        message: content.length > 60 ? `${content.slice(0, 60)}...` : content,
+        type: 'INFO',
+        link: `/profile?tab=support`,
+      });
+    }
   }
 
   return NextResponse.json({ message });

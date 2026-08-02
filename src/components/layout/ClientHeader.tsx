@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Globe, ShoppingCart, Heart, Menu, X, User as UserIcon, LogOut, Sparkles, ChevronRight, Package, Headset } from 'lucide-react';
+import { Globe, ShoppingCart, Heart, Menu, X, User as UserIcon, LogOut, Sparkles, ChevronRight, Package, Headset, Shield, Zap, ChevronDown } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import CartDrawer from '../ui/CartDrawer';
 import NotificationDropdown from '../ui/NotificationDropdown';
@@ -19,6 +19,8 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
   const [scrolled, setScrolled] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const itemCount = useCartStore((s) => s.itemCount());
   const wishlistCount = useWishlistStore((s) => s.items.length);
@@ -34,6 +36,16 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLanguageSwitch = () => {
@@ -150,9 +162,108 @@ export default function ClientHeader({ siteName = "TroveSeek", siteLogoLight, si
             )}
           </button>
 
-          {/* Sign-in button for guests (Profile pic removed from header bar as requested) */}
-          {!session?.user && (
-            <Link href="/login" className={styles.headerAuthLink}>
+          {/* User Profile Avatar & Dropdown for Desktop / Larger Screens */}
+          {session?.user ? (
+            <div className={`${styles.desktopOnly} ${styles.userMenuContainer}`} ref={userMenuRef}>
+              <button
+                className={styles.userProfileBtn}
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                aria-label="User menu"
+                aria-expanded={userMenuOpen}
+              >
+                <div className={styles.userAvatar}>
+                  {session.user.image ? (
+                    <img
+                      src={session.user.image}
+                      alt={session.user.name || 'User'}
+                      className={styles.userAvatarImg}
+                    />
+                  ) : (
+                    <span className={styles.userInitials}>
+                      {session.user.name
+                        ? session.user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+                        : 'U'}
+                    </span>
+                  )}
+                </div>
+                <ChevronDown size={14} className={`${styles.chevron} ${userMenuOpen ? styles.chevronOpen : ''}`} />
+              </button>
+
+              {userMenuOpen && (
+                <div className={styles.userDropdown}>
+                  <div className={styles.userDropdownHeader}>
+                    <div className={styles.userDropdownName}>{session.user.name || 'User'}</div>
+                    <div className={styles.userDropdownEmail}>{session.user.email}</div>
+                  </div>
+
+                  <div className={styles.userDropdownDivider} />
+
+                  <div className={styles.userDropdownLinks}>
+                    <Link
+                      href="/profile"
+                      className={styles.userDropdownItem}
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <UserIcon size={16} />
+                      <span>{isAr ? 'الملف الشخصي' : 'My Profile'}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=orders"
+                      className={styles.userDropdownItem}
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Package size={16} />
+                      <span>{isAr ? 'طلباتي' : 'My Orders'}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=subscriptions"
+                      className={styles.userDropdownItem}
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Zap size={16} />
+                      <span>{isAr ? 'اشتراكاتي' : 'My Subscriptions'}</span>
+                    </Link>
+
+                    <Link
+                      href="/profile?tab=support"
+                      className={styles.userDropdownItem}
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Headset size={16} />
+                      <span>{isAr ? 'الدعم الفني' : 'Support Chat'}</span>
+                    </Link>
+
+                    {session.user && ['SUPER_ADMIN', 'ADMIN', 'SALES_MANAGER', 'SUPPORT', 'EMPLOYEE'].includes((session.user as any).role) && (
+                      <Link
+                        href="/admin"
+                        className={`${styles.userDropdownItem} ${styles.adminLink}`}
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Shield size={16} />
+                        <span>{isAr ? 'لوحة التحكم الإدارية' : 'Admin Panel'}</span>
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className={styles.userDropdownDivider} />
+
+                  <button
+                    className={`${styles.userDropdownItem} ${styles.logoutBtn}`}
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      signOut({ callbackUrl: '/' });
+                    }}
+                  >
+                    <LogOut size={16} />
+                    <span>{isAr ? 'تسجيل الخروج' : 'Sign Out'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/login" className={`${styles.headerAuthLink} ${styles.desktopOnly}`}>
               <button className={styles.signInBtn}>
                 <UserIcon size={15} />
                 <span>{isAr ? 'تسجيل الدخول' : 'Sign In'}</span>

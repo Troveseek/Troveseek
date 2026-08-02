@@ -12,15 +12,18 @@ export async function GET(req: NextRequest) {
 
   const userId = (session.user as any).id;
   
-  let lastCheck = new Date();
+  let lastCheck = new Date(Date.now() - 5000);
   let isClosed = false;
 
   const responseStream = new TransformStream();
   const writer = responseStream.writable.getWriter();
   const encoder = new TextEncoder();
 
+  let pollInterval: NodeJS.Timeout | null = null;
+
   req.signal.addEventListener('abort', () => {
     isClosed = true;
+    if (pollInterval) clearInterval(pollInterval);
     writer.close().catch(() => {});
   });
 
@@ -30,15 +33,16 @@ export async function GET(req: NextRequest) {
       await writer.write(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
     } catch (e) {
       isClosed = true;
+      if (pollInterval) clearInterval(pollInterval);
     }
   };
 
   // Send initial connection event
   await sendEvent('connected', { status: 'ok' });
 
-  const pollInterval = setInterval(async () => {
+  pollInterval = setInterval(async () => {
     if (isClosed) {
-      clearInterval(pollInterval);
+      if (pollInterval) clearInterval(pollInterval);
       return;
     }
     try {
@@ -48,7 +52,8 @@ export async function GET(req: NextRequest) {
           userId,
           createdAt: { gt: lastCheck },
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        take: 10,
       });
       
       if (newNotifications.length > 0) {
@@ -61,7 +66,7 @@ export async function GET(req: NextRequest) {
     } catch (error) {
       console.error('SSE polling error:', error);
     }
-  }, 3000); // Check every 3 seconds for better real-time feel
+  }, 2500); // 2.5 second polling for fast real-time response
 
   return new NextResponse(responseStream.readable, {
     headers: {

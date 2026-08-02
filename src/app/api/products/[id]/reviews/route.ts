@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db';
+import { notifyAdmins } from '@/lib/notifications';
 import { z } from 'zod';
 
 const reviewSchema = z.object({
@@ -41,6 +42,14 @@ export async function POST(
         authorName,
         productId,
       },
+    });
+
+    // Notify admins of new review to moderate
+    await notifyAdmins({
+      title: 'New Product Review',
+      message: `${authorName} rated "${product.name}" (${rating}/5 stars)`,
+      type: 'INFO',
+      link: '/admin/reviews',
     });
 
     return NextResponse.json({ review }, { status: 201 });

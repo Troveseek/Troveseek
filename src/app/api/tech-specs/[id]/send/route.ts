@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import db from '@/lib/db';
 import { sendEmail } from '@/lib/email';
+import { sendNotification } from '@/lib/notifications';
 
 // POST — Mark spec as SENT
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -64,6 +65,21 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         </div>
       `
     });
+
+    // If user has an account with this email, send an in-app notification
+    const clientUser = await db.user.findUnique({
+      where: { email: spec.clientEmail.toLowerCase() },
+      select: { id: true },
+    });
+    if (clientUser) {
+      await sendNotification({
+        userId: clientUser.id,
+        title: 'New Technical Specification Ready',
+        message: `Proposal #${spec.specNumber} (${spec.title}) is ready for your digital signature.`,
+        type: 'INFO',
+        link: `/sign/${spec.signatureToken}`,
+      });
+    }
 
     // Return the signing URL so admin can share it
     return NextResponse.json({

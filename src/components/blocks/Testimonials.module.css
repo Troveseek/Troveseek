@@ -1,5 +1,5 @@
 .testimonialsSection {
-  padding: clamp(64px, 8vw, 120px) clamp(16px, 3vw, 32px);
+  padding: clamp(48px, 6vw, 88px) clamp(16px, 3vw, 32px);
   background: var(--clr-surface, #0f0f1a);
   width: 100%;
   box-sizing: border-box;
@@ -12,29 +12,29 @@
 
 .header {
   text-align: center;
-  margin-bottom: clamp(36px, 5vw, 60px);
+  margin-bottom: clamp(28px, 3.5vw, 48px);
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: clamp(24px, 4vw, 38px);
+  font-size: clamp(22px, 2.6vw + 6px, 34px);
   font-weight: 800;
   color: var(--clr-text, #fff);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   letter-spacing: -0.02em;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: clamp(16px, 3vw, 32px);
+  gap: clamp(16px, 2.5vw, 28px);
 }
 
 .testimonialCard {
   background: var(--clr-surface-2, #16162a);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-lg, 16px);
-  padding: clamp(24px, 4vw, 32px);
+  padding: clamp(20px, 2.5vw, 28px);
   display: flex;
   flex-direction: column;
   gap: 20px;

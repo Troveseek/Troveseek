@@ -14,22 +14,22 @@ export async function GallerySection() {
   if (images.length === 0) return null; // Hide if empty
 
   return (
-    <section style={{ padding: '96px 32px', background: 'var(--clr-bg)' }}>
+    <section className="section-padding" style={{ background: 'var(--clr-bg)' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(28px, 3.5vw, 44px)' }}>
+          <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>
             {isAr ? 'الحياة في TroveSeek' : 'Life at TroveSeek'}
           </div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700 }}>{isAr ? 'خلف الكواليس' : 'Behind the Scenes'}</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(22px, 2.6vw + 6px, 34px)', fontWeight: 700, margin: 0 }}>{isAr ? 'خلف الكواليس' : 'Behind the Scenes'}</h2>
         </div>
 
         {/* Masonry Grid */}
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-          gap: '16px',
-          gridAutoRows: '200px'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', 
+          gap: 'clamp(12px, 1.5vw, 16px)',
+          gridAutoRows: 'clamp(160px, 16vw, 190px)'
         }}>
           {images.map((img, i) => {
             const isLarge = i % 4 === 0 || i % 5 === 0;

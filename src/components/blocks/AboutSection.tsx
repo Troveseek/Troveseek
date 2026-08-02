@@ -48,29 +48,29 @@ export async function AboutSection() {
         
         {/* Left: Text Content */}
         <div className={styles.textContent}>
-          <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>
+          <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px' }}>
             {subtitle}
           </div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 700, marginBottom: '24px', lineHeight: 1.2 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(22px, 2.6vw + 6px, 34px)', fontWeight: 700, marginBottom: '16px', lineHeight: 1.25 }}>
             {title}
           </h2>
-          <p style={{ fontSize: '18px', color: 'var(--clr-text-muted)', lineHeight: 1.7, marginBottom: '32px' }}>
+          <p style={{ fontSize: 'clamp(14px, 0.9vw + 4px, 16px)', color: 'var(--clr-text-muted)', lineHeight: 1.65, marginBottom: '24px' }}>
             {desc}
           </p>
           
           <div className={styles.missionsGrid}>
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ color: 'var(--clr-primary)', background: 'var(--clr-primary-dim)', padding: '12px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Target size={24} /></div>
+            <div style={{ display: 'flex', gap: '14px' }}>
+              <div style={{ color: 'var(--clr-primary)', background: 'var(--clr-primary-dim)', padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Target size={22} /></div>
               <div>
-                <h4 style={{ fontWeight: 600, fontSize: '16px', marginBottom: '4px' }}>{isAr ? 'مهمتنا' : 'Our Mission'}</h4>
-                <p style={{ fontSize: '14px', color: 'var(--clr-text-muted)', margin: 0 }}>{mission}</p>
+                <h4 style={{ fontWeight: 600, fontSize: '15px', marginBottom: '4px' }}>{isAr ? 'مهمتنا' : 'Our Mission'}</h4>
+                <p style={{ fontSize: '13.5px', color: 'var(--clr-text-muted)', margin: 0, lineHeight: 1.5 }}>{mission}</p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '16px' }}>
-              <div style={{ color: 'var(--clr-accent)', background: 'rgba(0,229,176,0.1)', padding: '12px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Lightbulb size={24} /></div>
+            <div style={{ display: 'flex', gap: '14px' }}>
+              <div style={{ color: 'var(--clr-accent)', background: 'rgba(0,229,176,0.1)', padding: '10px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Lightbulb size={22} /></div>
               <div>
-                <h4 style={{ fontWeight: 600, fontSize: '16px', marginBottom: '4px' }}>{isAr ? 'رؤيتنا' : 'Our Vision'}</h4>
-                <p style={{ fontSize: '14px', color: 'var(--clr-text-muted)', margin: 0 }}>{vision}</p>
+                <h4 style={{ fontWeight: 600, fontSize: '15px', marginBottom: '4px' }}>{isAr ? 'رؤيتنا' : 'Our Vision'}</h4>
+                <p style={{ fontSize: '13.5px', color: 'var(--clr-text-muted)', margin: 0, lineHeight: 1.5 }}>{vision}</p>
               </div>
             </div>
           </div>
@@ -91,11 +91,11 @@ export async function AboutSection() {
             { value: getLocalized('about_stat4_value', isAr ? '99.9%' : '99.9%'), label: getLocalized('about_stat4_label', isAr ? 'وقت التشغيل' : 'Uptime'), icon: <Award size={20} color="#ff4444" /> },
           ].map((stat, i) => (
             <div key={i} className={styles.statCard}>
-              <div style={{ marginBottom: '16px' }}>{stat.icon}</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: 700, color: 'var(--clr-text)', marginBottom: '8px' }}>
+              <div style={{ marginBottom: '12px' }}>{stat.icon}</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(22px, 2vw + 6px, 30px)', fontWeight: 700, color: 'var(--clr-text)', marginBottom: '6px' }}>
                 {stat.value}
               </div>
-              <div style={{ fontSize: '14px', color: 'var(--clr-text-muted)', fontWeight: 500 }}>
+              <div style={{ fontSize: '13.5px', color: 'var(--clr-text-muted)', fontWeight: 500 }}>
                 {stat.label}
               </div>
             </div>

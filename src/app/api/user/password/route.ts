@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import db from '@/lib/db';
 import { comparePassword, hashPassword } from '@/lib/auth/password';
+import { sendNotification } from '@/lib/notifications';
 import { z } from 'zod';
 
 const passwordUpdateSchema = z.object({
@@ -37,6 +38,14 @@ export async function PATCH(req: Request) {
     await db.user.update({
       where: { id: session.user.id },
       data: { passwordHash: hashedPassword }
+    });
+
+    await sendNotification({
+      userId: session.user.id,
+      title: 'Security Alert: Password Changed',
+      message: 'Your account password has been successfully updated.',
+      type: 'WARNING',
+      link: '/profile',
     });
 
     return NextResponse.json({ message: 'Password updated successfully' });
