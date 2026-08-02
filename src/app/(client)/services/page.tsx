@@ -44,7 +44,7 @@ export default async function ServicesPage() {
     features: [] as string[],
     logo: s.logo,
     iconKey: 'web' as string,
-    large: i % 3 === 0,
+    large: i % 4 === 0 || i % 4 === 3,
   }));
 
   // Fetch Hero for this page
