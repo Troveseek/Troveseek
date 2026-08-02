@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db';
+import { Resend } from 'resend';
+
+// Initialize Resend if API key is present
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +14,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Find all admins to notify
+    // 1. Find all admins to notify via in-app notifications
     const admins = await db.user.findMany({
       where: { role: 'ADMIN' }
     });
@@ -34,7 +38,34 @@ export async function POST(req: Request) {
       );
     }
 
-    // In a real production app, you would also use SendGrid/Resend here to send a real email.
+    // 2. Fetch the dynamic destination email from SiteSettings
+    const setting = await db.siteSetting.findUnique({
+      where: { key: 'contact_email' }
+    });
+    
+    const destinationEmail = setting?.value || 'admin@troveseek.com';
+
+    // 3. Send the actual email using Resend
+    if (resend) {
+      await resend.emails.send({
+        from: 'TroveSeek Contact Form <onboarding@resend.dev>', // Use a verified domain in production
+        to: destinationEmail,
+        replyTo: email,
+        subject: `New Contact Request: ${subject || 'General Inquiry'}`,
+        html: `
+          <h2>New Contact Form Submission</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Company:</strong> ${company || 'N/A'}</p>
+          <p><strong>Subject:</strong> ${subject}</p>
+          <hr />
+          <h3>Message:</h3>
+          <p style="white-space: pre-wrap;">${message}</p>
+        `
+      });
+    } else {
+      console.warn('RESEND_API_KEY is not set. Email was not sent, but notification was saved.');
+    }
 
     return NextResponse.json({ success: true, message: 'Message sent successfully' });
   } catch (error) {
