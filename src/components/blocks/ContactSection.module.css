@@ -159,31 +159,36 @@
   flex: 42;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 .infoCard {
-  background: var(--clr-surface-2);
+  background: var(--clr-surface-1);
   border: 1px solid var(--clr-border);
-  padding: clamp(20px, 2.5vw, 26px);
-  border-radius: var(--radius-lg, 18px);
-  box-shadow: var(--shadow-card, 0 4px 20px rgba(0, 0, 0, 0.06));
+  padding: clamp(24px, 3vw, 32px);
+  border-radius: var(--radius-xl, 24px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.infoCard:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
 }
 
 .infoCardTitle {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   font-family: var(--font-display);
   color: var(--clr-text);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .contactMethod {
   display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding-bottom: 16px;
-  margin-bottom: 16px;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
   border-bottom: 1px solid var(--clr-border);
 }
 
@@ -194,29 +199,35 @@
 }
 
 .contactIcon {
-  width: 42px;
-  height: 42px;
+  width: 48px;
+  height: 48px;
   background: var(--clr-primary-dim);
-  border: 1px solid rgba(124, 111, 255, 0.2);
-  border-radius: var(--radius-md, 10px);
+  border: 1px solid rgba(124, 111, 255, 0.15);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--clr-primary);
   flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+
+.contactMethod:hover .contactIcon {
+  background: var(--clr-primary);
+  color: #fff;
 }
 
 .contactLabel {
-  font-size: 10.5px;
+  font-size: 11px;
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--clr-text-dim);
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 
 .contactValue {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--clr-text);
   font-family: var(--font-display);
@@ -225,14 +236,14 @@
 /* ── Map Container ──────────────────── */
 .mapContainer {
   width: 100%;
-  min-height: 280px;
-  height: 310px;
+  min-height: 300px;
+  height: 350px;
   background: var(--clr-surface-2);
   border: 1px solid var(--clr-border);
-  border-radius: var(--radius-lg, 18px);
+  border-radius: var(--radius-xl, 24px);
   overflow: hidden;
   position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
 }
 
 /* ── Responsive ──────────────────────── */
@@ -246,6 +257,15 @@
   .formRow {
     grid-template-columns: 1fr;
   }
+  .infoColumn {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .mapContainer {
+    grid-column: 1 / -1;
+    height: 400px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -254,5 +274,12 @@
   }
   .formColumn {
     padding: 20px;
+  }
+  .infoColumn {
+    display: flex;
+    flex-direction: column;
+  }
+  .mapContainer {
+    height: 300px;
   }
 }

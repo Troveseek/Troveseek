@@ -148,10 +148,16 @@
 }
 
 .infoCard {
-  background: var(--clr-surface-2);
+  background: var(--clr-surface-1);
   border: 1px solid var(--clr-border);
-  padding: 28px;
-  border-radius: var(--radius-lg);
+  padding: clamp(24px, 3vw, 32px);
+  border-radius: var(--radius-xl, 24px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.infoCard:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
 }
 
 .infoCardTitle {
@@ -164,7 +170,7 @@
 
 .contactMethod {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
   padding-bottom: 20px;
   margin-bottom: 20px;
@@ -178,16 +184,22 @@
 }
 
 .contactIcon {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   background: var(--clr-primary-dim);
-  border: 1px solid rgba(124, 111, 255, 0.2);
-  border-radius: var(--radius-md);
+  border: 1px solid rgba(124, 111, 255, 0.15);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--clr-primary);
   flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+
+.contactMethod:hover .contactIcon {
+  background: var(--clr-primary);
+  color: #fff;
 }
 
 .contactLabel {
@@ -206,17 +218,17 @@
   font-family: var(--font-display);
 }
 
-/* ── Map container ──────────────────── */
+/* ── Map Container ──────────────────── */
 .mapContainer {
   width: 100%;
-  min-height: 320px;
-  height: 340px;
+  min-height: 300px;
+  height: 350px;
   background: var(--clr-surface-2);
   border: 1px solid var(--clr-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl, 24px);
   overflow: hidden;
   position: relative;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
 }
 
 /* ── Responsive ──────────────────────── */
@@ -230,6 +242,15 @@
   .formRow {
     grid-template-columns: 1fr;
   }
+  .infoColumn {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .mapContainer {
+    grid-column: 1 / -1;
+    height: 400px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -238,5 +259,12 @@
   }
   .formColumn {
     padding: 20px;
+  }
+  .infoColumn {
+    display: flex;
+    flex-direction: column;
+  }
+  .mapContainer {
+    height: 300px;
   }
 }
