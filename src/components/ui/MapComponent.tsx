@@ -69,7 +69,7 @@ export default function MapComponent() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {locations.length > 0 ? (
+        {locations.length > 0 && (
           locations.map((loc) => (
             <Marker key={loc.id} position={[loc.latitude, loc.longitude]}>
               <Popup>
@@ -90,18 +90,6 @@ export default function MapComponent() {
               </Popup>
             </Marker>
           ))
-        ) : (
-          <Marker position={defaultCenter}>
-            <Popup>
-              <div style={{ padding: '4px' }}>
-                <h3 style={{ margin: '0 0 6px', fontSize: '14px', fontWeight: 700, color: '#1a1a2e' }}>TroveSeek HQ</h3>
-                <p style={{ margin: '0 0 8px', fontSize: '12px', color: '#555', lineHeight: 1.4 }}>123 Innovation Drive, Tech City</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#444' }}>
-                  <Mail size={12} /> contact@troveseek.com
-                </div>
-              </div>
-            </Popup>
-          </Marker>
         )}
       </MapContainer>
     </div>
