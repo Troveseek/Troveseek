@@ -33,6 +33,7 @@ export default function ContactPage() {
   const isAr = locale === 'ar';
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   
   const [contactInfo, setContactInfo] = useState({
     email: 'contact@troveseek.com',
@@ -42,6 +43,16 @@ export default function ContactPage() {
   });
   
   const [locations, setLocations] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    subject: isAr ? 'استفسار عام' : 'General Inquiry',
+    message: ''
+  });
 
   useEffect(() => {
     fetch('/api/settings?keys=contact_email,contact_phone,contact_address,contact_map_url')
@@ -66,15 +77,53 @@ export default function ContactPage() {
         }
       })
       .catch(console.error);
+
+    // Fetch active services to populate the subjects dropdown
+    fetch('/api/services')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          setServices(data.filter((s: any) => s.status === 'ACTIVE'));
+        }
+      })
+      .catch(console.error);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setErrorMsg('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to send message');
+      }
+
       setSubmitted(true);
-    }, 800);
+      setFormData({
+        name: '',
+        email: '',
+        company: '',
+        subject: isAr ? 'استفسار عام' : 'General Inquiry',
+        message: ''
+      });
+    } catch (err: any) {
+      setErrorMsg(isAr ? 'حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.' : 'An error occurred while sending your message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -123,34 +172,45 @@ export default function ContactPage() {
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>{isAr ? 'الاسم الكامل' : 'Full Name'}</label>
-                  <input type="text" required className={styles.formInput} placeholder={isAr ? 'جون دو' : 'John Doe'} />
+                  <input type="text" name="name" value={formData.name} onChange={handleChange} required className={styles.formInput} placeholder={isAr ? 'جون دو' : 'John Doe'} />
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>{isAr ? 'البريد الإلكتروني' : 'Email Address'}</label>
-                  <input type="email" required className={styles.formInput} placeholder="john@example.com" />
+                  <input type="email" name="email" value={formData.email} onChange={handleChange} required className={styles.formInput} placeholder="john@example.com" />
                 </div>
               </div>
 
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>{isAr ? 'الشركة (اختياري)' : 'Company (Optional)'}</label>
-                <input type="text" className={styles.formInput} placeholder={isAr ? 'شركتك' : 'Your Company Inc.'} />
+                <input type="text" name="company" value={formData.company} onChange={handleChange} className={styles.formInput} placeholder={isAr ? 'شركتك' : 'Your Company Inc.'} />
               </div>
 
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>{isAr ? 'الموضوع' : 'Subject'}</label>
-                <select className={styles.formSelect}>
+                <select name="subject" value={formData.subject} onChange={handleChange} className={styles.formSelect}>
                   <option>{isAr ? 'استفسار عام' : 'General Inquiry'}</option>
                   <option>{isAr ? 'المبيعات والأسعار' : 'Sales & Pricing'}</option>
                   <option>{isAr ? 'الدعم الفني' : 'Technical Support'}</option>
                   <option>{isAr ? 'شراكة' : 'Partnership'}</option>
+                  {services.map(s => (
+                    <option key={s.id} value={`Service: ${s.name}`}>
+                      {isAr ? `خدمة: ${s.nameAr || s.name}` : `Service: ${s.name}`}
+                    </option>
+                  ))}
                   <option>{isAr ? 'أخرى' : 'Other'}</option>
                 </select>
               </div>
 
               <div className={styles.formGroup}>
                 <label className={styles.formLabel}>{isAr ? 'الرسالة' : 'Message'}</label>
-                <textarea required className={styles.formTextarea} placeholder={isAr ? 'أخبرنا كيف يمكننا مساعدتك...' : 'Tell us how we can help you...'} />
+                <textarea name="message" value={formData.message} onChange={handleChange} required className={styles.formTextarea} placeholder={isAr ? 'أخبرنا كيف يمكننا مساعدتك...' : 'Tell us how we can help you...'} />
               </div>
+
+              {errorMsg && (
+                <div style={{ color: '#ff4444', fontSize: '13.5px', marginBottom: '16px' }}>
+                  {errorMsg}
+                </div>
+              )}
 
               <Button type="submit" size="lg" variant="primary" style={{ width: '100%' }} icon={<Send size={17} />} disabled={isSubmitting}>
                 {isSubmitting ? (isAr ? 'جاري الإرسال...' : 'Sending...') : (isAr ? 'إرسال الرسالة' : 'Send Message')}
