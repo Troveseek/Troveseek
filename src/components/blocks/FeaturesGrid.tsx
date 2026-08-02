@@ -5,46 +5,46 @@ import { getLocale } from 'next-intl/server';
 
 const features = [
   {
-    icon: Layers,
-    title: 'Vast Digital Inventory',
-    titleAr: 'مخزون رقمي ضخم',
-    description: 'Access millions of premium digital assets, templates, and 3D models curated by top global creators.',
-    descriptionAr: 'الوصول إلى الملايين من الأصول الرقمية المتميزة والقوالب والنماذج ثلاثية الأبعاد برعاية أفضل المبدعين العالميين.'
-  },
-  {
-    icon: Shield,
-    title: 'Enterprise Security',
-    titleAr: 'أمان المؤسسات',
-    description: 'Bank-grade encryption, secure transactions, and robust intellectual property protection for all your assets.',
-    descriptionAr: 'تشفير بمستوى البنوك ومعاملات آمنة وحماية قوية للملكية الفكرية لجميع أصولك.'
+    icon: Headphones,
+    title: 'Elite Professional Services',
+    titleAr: 'خدمات احترافية نخبوية',
+    description: 'Deploy our top-tier experts for bespoke development, strategic consulting, and flawless media production tailored to your enterprise.',
+    descriptionAr: 'انشر خبراءنا من الطراز الأول للتطوير المخصص، الاستشارات الاستراتيجية، والإنتاج الإعلامي المصمم خصيصاً لمؤسستك.'
   },
   {
     icon: Zap,
-    title: 'Lightning Fast',
-    titleAr: 'سرعة فائقة',
-    description: 'Built on edge computing architecture ensuring ultra-low latency and instant delivery worldwide.',
-    descriptionAr: 'مبني على بنية الحوسبة الطرفية لضمان زمن انتقال منخفض للغاية وتسليم فوري في جميع أنحاء العالم.'
+    title: 'Enterprise-Grade SaaS',
+    titleAr: 'برمجيات كخدمة للمؤسسات',
+    description: 'Access highly scalable, secure, and robust software solutions designed to automate workflows and accelerate exponential growth.',
+    descriptionAr: 'احصل على حلول برمجية آمنة وقابلة للتوسع، مصممة لأتمتة سير العمل وتسريع وتيرة النمو المضاعف.'
+  },
+  {
+    icon: Layers,
+    title: 'Premium Digital Assets',
+    titleAr: 'أصول رقمية متميزة',
+    description: 'Leverage an exclusive marketplace of high-fidelity digital products, templates, and models curated by global industry leaders.',
+    descriptionAr: 'استفد من سوق حصري يضم منتجات رقمية، قوالب، ونماذج عالية الدقة برعاية قادة الصناعة العالميين.'
+  },
+  {
+    icon: Shield,
+    title: 'Uncompromising Security',
+    titleAr: 'أمان لا مساومة فيه',
+    description: 'Military-grade encryption, secure intellectual property frameworks, and compliant transaction infrastructures for absolute peace of mind.',
+    descriptionAr: 'تشفير بمستوى عسكري، أطر آمنة للملكية الفكرية، وبنى تحتية لمعاملات متوافقة لضمان راحة بال مطلقة.'
   },
   {
     icon: Globe,
     title: 'Global Ecosystem',
     titleAr: 'نظام بيئي عالمي',
-    description: 'Connect with a thriving community of buyers and sellers spanning across 120+ countries.',
-    descriptionAr: 'تواصل مع مجتمع مزدهر من المشترين والبائعين يمتد عبر أكثر من 120 دولة.'
+    description: 'Seamlessly integrate into a thriving worldwide network of visionary buyers, sellers, and strategic partners spanning over 120 countries.',
+    descriptionAr: 'اندمج بسلاسة في شبكة عالمية مزدهرة من المشترين والبائعين والشركاء الاستراتيجيين ذوي الرؤى عبر أكثر من 120 دولة.'
   },
   {
     icon: Cpu,
-    title: 'AI-Powered Insights',
-    titleAr: 'رؤى مدعومة بالذكاء الاصطناعي',
-    description: 'Leverage our proprietary AI engines to analyze trends, optimize pricing, and predict market demands.',
-    descriptionAr: 'استفد من محركات الذكاء الاصطناعي الخاصة بنا لتحليل الاتجاهات وتحسين الأسعار وتوقع طلبات السوق.'
-  },
-  {
-    icon: Headphones,
-    title: '24/7 Expert Support',
-    titleAr: 'دعم فني على مدار الساعة',
-    description: 'Our dedicated team of professionals is always available to help you scale your digital business.',
-    descriptionAr: 'فريقنا المتخصص من المحترفين متاح دائماً لمساعدتك في توسيع نطاق عملك الرقمي.'
+    title: 'Strategic AI Insights',
+    titleAr: 'رؤى استراتيجية مدعومة بالذكاء الاصطناعي',
+    description: 'Harness proprietary machine learning engines to analyze market trends, optimize service pricing, and predict industry shifts.',
+    descriptionAr: 'سخّر محركات التعلم الآلي الخاصة بنا لتحليل اتجاهات السوق، تحسين تسعير الخدمات، وتوقع تحولات الصناعة.'
   }
 ];
 
@@ -57,11 +57,11 @@ export async function FeaturesGrid() {
       <div className={styles.container}>
         <div className={styles.header}>
           <span className={styles.badge}>{isAr ? 'لماذا TroveSeek' : 'Why TroveSeek'}</span>
-          <h2 className={styles.title}>{isAr ? 'مستقبل التجارة الرقمية' : 'The Future of Digital Commerce'}</h2>
+          <h2 className={styles.title}>{isAr ? 'محور التحول الرقمي' : 'The Nexus of Digital Transformation'}</h2>
           <p className={styles.subtitle}>
             {isAr 
-              ? 'كل ما تحتاجه لبيع وشراء وإدارة المنتجات الرقمية على نطاق واسع. نحن نوفر البنية التحتية لتتمكن من التركيز على الإبداع.' 
-              : 'Everything you need to buy, sell, and manage digital products at scale. We provide the infrastructure so you can focus on creation.'}
+              ? 'نظام بيئي متكامل يجمع بين المنتجات الرقمية المتميزة، حلول البرمجيات كخدمة (SaaS) القابلة للتوسع، والخدمات الاحترافية النخبوية. نحن نبني البنية التحتية لتتمكن أنت من قيادة السوق.' 
+              : 'An integrated ecosystem converging premium Digital Products, scalable SaaS solutions, and elite Professional Services. We architect the infrastructure so you can command the market.'}
           </p>
         </div>
         
