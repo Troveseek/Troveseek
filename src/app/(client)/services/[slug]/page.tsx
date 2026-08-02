@@ -44,11 +44,13 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
   let portfolio = [];
   let testimonials = [];
   let tiers = [];
+  let images = [];
   
   try { if (isAr && service.processAr && service.processAr !== "[]") process = JSON.parse(service.processAr); else if (service.process && service.process !== "[]") process = JSON.parse(service.process); } catch(e){}
   try { if (isAr && service.portfolioAr && service.portfolioAr !== "[]") portfolio = JSON.parse(service.portfolioAr); else if (service.portfolio && service.portfolio !== "[]") portfolio = JSON.parse(service.portfolio); } catch(e){}
   try { if (isAr && service.testimonialsAr && service.testimonialsAr !== "[]") testimonials = JSON.parse(service.testimonialsAr); else if (service.testimonials && service.testimonials !== "[]") testimonials = JSON.parse(service.testimonials); } catch(e){}
   try { if (isAr && service.tiersAr && service.tiersAr !== "[]") tiers = JSON.parse(service.tiersAr); else if (service.tiers && service.tiers !== "[]") tiers = JSON.parse(service.tiers); } catch(e){}
+  try { if (service.images && service.images !== "[]") images = JSON.parse(service.images); } catch(e){}
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--clr-bg)' }}>
@@ -102,6 +104,23 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                   </div>
                   <h3 style={{ fontWeight: 600, fontSize: '18px', marginBottom: '10px' }}>{step.title}</h3>
                   <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px', lineHeight: 1.7, margin: 0 }}>{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Service Gallery */}
+        {images.length > 0 && (
+          <section id="gallery">
+            <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--clr-accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px' }}>{isAr ? 'معرض الصور' : 'Gallery'}</div>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '32px' }}>{isAr ? 'صور الخدمة' : 'Service Screenshots'}</h2>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+              {images.map((img: string, i: number) => (
+                <div key={i} style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--clr-border)', aspectRatio: '4/3', transition: 'var(--transition)' }} className="hover-scale">
+                  <img src={img} alt={`${service.name} image ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               ))}
             </div>
