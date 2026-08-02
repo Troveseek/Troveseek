@@ -56,39 +56,53 @@ export default function MapComponent() {
     );
   }
 
-  // Default to global/London view if no locations exist
+  // Default to global HQ view if no locations exist
   const defaultCenter: [number, number] = locations.length > 0 
     ? [locations[0].latitude, locations[0].longitude] 
-    : [51.505, -0.09];
-  const defaultZoom = locations.length > 0 ? 12 : 2;
+    : [36.752887, 3.042048];
+  const defaultZoom = locations.length > 0 ? 13 : 4;
 
   return (
-    <div style={{ width: '100%', height: '100%', minHeight: '400px', borderRadius: '16px', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
-      <MapContainer center={defaultCenter} zoom={defaultZoom} style={{ height: '100%', width: '100%' }}>
+    <div style={{ width: '100%', height: '100%', minHeight: '340px', borderRadius: '16px', overflow: 'hidden', position: 'relative', zIndex: 0 }}>
+      <MapContainer center={defaultCenter} zoom={defaultZoom} scrollWheelZoom={false} style={{ height: '100%', width: '100%', minHeight: '340px' }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {locations.map((loc) => (
-          <Marker key={loc.id} position={[loc.latitude, loc.longitude]}>
+        {locations.length > 0 ? (
+          locations.map((loc) => (
+            <Marker key={loc.id} position={[loc.latitude, loc.longitude]}>
+              <Popup>
+                <div style={{ padding: '4px' }}>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '14px', fontWeight: 700, color: '#1a1a2e' }}>{loc.name}</h3>
+                  <p style={{ margin: '0 0 8px', fontSize: '12px', color: '#555', lineHeight: 1.4 }}>{loc.address}</p>
+                  {loc.phone && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#444', marginBottom: '4px' }}>
+                      <Phone size={12} /> {loc.phone}
+                    </div>
+                  )}
+                  {loc.email && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#444' }}>
+                      <Mail size={12} /> {loc.email}
+                    </div>
+                  )}
+                </div>
+              </Popup>
+            </Marker>
+          ))
+        ) : (
+          <Marker position={defaultCenter}>
             <Popup>
               <div style={{ padding: '4px' }}>
-                <h3 style={{ margin: '0 0 8px', fontSize: '15px', fontWeight: 600, color: '#333' }}>{loc.name}</h3>
-                <p style={{ margin: '0 0 12px', fontSize: '13px', color: '#666', lineHeight: 1.4 }}>{loc.address}</p>
-                {loc.phone && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#444', marginBottom: '4px' }}>
-                    <Phone size={12} /> {loc.phone}
-                  </div>
-                )}
-                {loc.email && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#444' }}>
-                    <Mail size={12} /> {loc.email}
-                  </div>
-                )}
+                <h3 style={{ margin: '0 0 6px', fontSize: '14px', fontWeight: 700, color: '#1a1a2e' }}>TroveSeek HQ</h3>
+                <p style={{ margin: '0 0 8px', fontSize: '12px', color: '#555', lineHeight: 1.4 }}>123 Innovation Drive, Tech City</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#444' }}>
+                  <Mail size={12} /> contact@troveseek.com
+                </div>
               </div>
             </Popup>
           </Marker>
-        ))}
+        )}
       </MapContainer>
     </div>
   );

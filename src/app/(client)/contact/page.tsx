@@ -7,11 +7,32 @@ import dynamic from 'next/dynamic';
 import styles from './page.module.css';
 import { useLocale } from 'next-intl';
 
-// Removed MapComponent
+// Dynamically import the map component with SSR disabled
+const MapComponent = dynamic(() => import('@/components/ui/MapComponent'), {
+  ssr: false,
+  loading: () => (
+    <div style={{
+      width: '100%',
+      height: '100%',
+      minHeight: '340px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'var(--clr-surface-2)',
+      borderRadius: 'var(--radius-lg, 16px)',
+      color: 'var(--clr-text-muted)',
+      fontSize: '13px'
+    }}>
+      Loading Map...
+    </div>
+  )
+});
 
 export default function ContactPage() {
   const locale = useLocale();
   const isAr = locale === 'ar';
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [contactInfo, setContactInfo] = useState({
     email: 'contact@troveseek.com',
@@ -47,6 +68,15 @@ export default function ContactPage() {
       .catch(console.error);
   }, []);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }, 800);
+  };
+
   return (
     <div className={styles.contactPage}>
       {/* Hero */}
@@ -64,43 +94,69 @@ export default function ContactPage() {
           <div className={styles.formHeading}>{isAr ? 'أرسل لنا رسالة' : 'Send us a Message'}</div>
           <p className={styles.formSubheading}>{isAr ? 'املأ النموذج أدناه وسنرد عليك خلال 24 ساعة.' : "Fill out the form below and we'll get back to you within 24 hours."}</p>
 
-          <form>
-            <div className={styles.formRow}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>{isAr ? 'الاسم الكامل' : 'Full Name'}</label>
-                <input type="text" className={styles.formInput} placeholder={isAr ? 'جون دو' : 'John Doe'} />
+          {submitted ? (
+            <div style={{
+              background: 'rgba(0, 229, 176, 0.1)',
+              border: '1px solid rgba(0, 229, 176, 0.3)',
+              borderRadius: 'var(--radius-md, 12px)',
+              padding: '24px',
+              textAlign: 'center',
+              color: 'var(--clr-text)'
+            }}>
+              <h3 style={{ color: 'var(--clr-accent)', marginBottom: '8px', fontSize: '18px', fontWeight: 700 }}>
+                {isAr ? 'تم استلام رسالتك بنجاح!' : 'Message Received Successfully!'}
+              </h3>
+              <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px', margin: 0 }}>
+                {isAr ? 'شكراً لتواصلك معنا. سنرد عليك في أقرب وقت ممكن.' : 'Thank you for reaching out. We will get back to you shortly.'}
+              </p>
+              <Button
+                variant="secondary"
+                size="sm"
+                style={{ marginTop: '16px' }}
+                onClick={() => setSubmitted(false)}
+              >
+                {isAr ? 'إرسال رسالة أخرى' : 'Send Another Message'}
+              </Button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className={styles.formRow}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>{isAr ? 'الاسم الكامل' : 'Full Name'}</label>
+                  <input type="text" required className={styles.formInput} placeholder={isAr ? 'جون دو' : 'John Doe'} />
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>{isAr ? 'البريد الإلكتروني' : 'Email Address'}</label>
+                  <input type="email" required className={styles.formInput} placeholder="john@example.com" />
+                </div>
               </div>
+
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>{isAr ? 'البريد الإلكتروني' : 'Email Address'}</label>
-                <input type="email" className={styles.formInput} placeholder="john@example.com" />
+                <label className={styles.formLabel}>{isAr ? 'الشركة (اختياري)' : 'Company (Optional)'}</label>
+                <input type="text" className={styles.formInput} placeholder={isAr ? 'شركتك' : 'Your Company Inc.'} />
               </div>
-            </div>
 
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>{isAr ? 'الشركة (اختياري)' : 'Company (Optional)'}</label>
-              <input type="text" className={styles.formInput} placeholder={isAr ? 'شركتك' : 'Your Company Inc.'} />
-            </div>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>{isAr ? 'الموضوع' : 'Subject'}</label>
+                <select className={styles.formSelect}>
+                  <option>{isAr ? 'استفسار عام' : 'General Inquiry'}</option>
+                  <option>{isAr ? 'المبيعات والأسعار' : 'Sales & Pricing'}</option>
+                  <option>{isAr ? 'الدعم الفني' : 'Technical Support'}</option>
+                  <option>{isAr ? 'شراكة' : 'Partnership'}</option>
+                  <option>{isAr ? 'أخرى' : 'Other'}</option>
+                </select>
+              </div>
 
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>{isAr ? 'الموضوع' : 'Subject'}</label>
-              <select className={styles.formSelect}>
-                <option>{isAr ? 'استفسار عام' : 'General Inquiry'}</option>
-                <option>{isAr ? 'المبيعات والأسعار' : 'Sales & Pricing'}</option>
-                <option>{isAr ? 'الدعم الفني' : 'Technical Support'}</option>
-                <option>{isAr ? 'شراكة' : 'Partnership'}</option>
-                <option>{isAr ? 'أخرى' : 'Other'}</option>
-              </select>
-            </div>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>{isAr ? 'الرسالة' : 'Message'}</label>
+                <textarea required className={styles.formTextarea} placeholder={isAr ? 'أخبرنا كيف يمكننا مساعدتك...' : 'Tell us how we can help you...'} />
+              </div>
 
-            <div className={styles.formGroup}>
-              <label className={styles.formLabel}>{isAr ? 'الرسالة' : 'Message'}</label>
-              <textarea className={styles.formTextarea} placeholder={isAr ? 'أخبرنا كيف يمكننا مساعدتك...' : 'Tell us how we can help you...'} />
-            </div>
-
-            <Button size="lg" variant="primary" style={{ width: '100%' }} icon={<Send size={17} />}>
-              {isAr ? 'إرسال الرسالة' : 'Send Message'}
-            </Button>
-          </form>
+              <Button type="submit" size="lg" variant="primary" style={{ width: '100%' }} icon={<Send size={17} />} disabled={isSubmitting}>
+                {isSubmitting ? (isAr ? 'جاري الإرسال...' : 'Sending...') : (isAr ? 'إرسال الرسالة' : 'Send Message')}
+              </Button>
+            </form>
+          )}
         </div>
 
         {/* Info Column */}
@@ -112,7 +168,11 @@ export default function ContactPage() {
               <div className={styles.contactIcon}><Mail size={22} /></div>
               <div>
                 <div className={styles.contactLabel}>{isAr ? 'البريد الإلكتروني' : 'Email'}</div>
-                <div className={styles.contactValue}>{contactInfo.email}</div>
+                <div className={styles.contactValue}>
+                  <a href={`mailto:${contactInfo.email}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    {contactInfo.email}
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -120,14 +180,18 @@ export default function ContactPage() {
               <div className={styles.contactIcon}><Phone size={22} /></div>
               <div>
                 <div className={styles.contactLabel}>{isAr ? 'الهاتف' : 'Phone'}</div>
-                <div className={styles.contactValue}>{contactInfo.phone}</div>
+                <div className={styles.contactValue}>
+                  <a href={`tel:${contactInfo.phone}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    {contactInfo.phone}
+                  </a>
+                </div>
               </div>
             </div>
 
             <div className={styles.contactMethod}>
               <div className={styles.contactIcon}><MapPin size={22} /></div>
               <div>
-                <div className={styles.contactLabel}>{isAr ? 'المقر العالمي' : 'Global Headquarters'}</div>
+                <div className={styles.contactLabel}>{isAr ? 'المقر الرئيسي' : 'Global Headquarters'}</div>
                 <div className={styles.contactValue}>
                   {contactInfo.mapUrl ? (
                     <a href={contactInfo.mapUrl} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>
@@ -141,8 +205,13 @@ export default function ContactPage() {
             </div>
           </div>
 
+          {/* Interactive Map */}
+          <div className={styles.mapContainer}>
+            <MapComponent />
+          </div>
+
           {locations.length > 0 && (
-            <div className={styles.infoCard} style={{ marginTop: '24px' }}>
+            <div className={styles.infoCard}>
               <div className={styles.infoCardTitle}>{isAr ? 'مكاتب أخرى' : 'Other Offices'}</div>
               {locations.map(loc => (
                 <div key={loc.id} className={styles.contactMethod}>

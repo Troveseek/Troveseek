@@ -7,6 +7,7 @@ import { ServicesGrid } from '@/components/blocks/ServicesGrid';
 import { Testimonials } from '@/components/blocks/Testimonials';
 import { GallerySection } from '@/components/blocks/GallerySection';
 import { BlogSection } from '@/components/blocks/BlogSection';
+import { ContactSection } from '@/components/blocks/ContactSection';
 import { CTASection } from '@/components/blocks/CTASection';
 import { AboutSection } from '@/components/blocks/AboutSection';
 import { TeamSection } from '@/components/blocks/TeamSection';
@@ -24,6 +25,7 @@ export default function HomePage() {
       <GallerySection />
       <TeamSection />
       <BlogSection />
+      <ContactSection />
       <CTASection />
     </main>
   );

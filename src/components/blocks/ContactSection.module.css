@@ -1,17 +1,24 @@
 /* ============================================================
-   Contact Page — Fully theme-aware (dark + light mode)
+   ContactSection — Home Page Block (Matching Contact Page Style)
    ============================================================ */
 
-.contactPage {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: clamp(32px, 4vw, 56px) clamp(16px, 3vw, 24px) clamp(48px, 6vw, 80px);
+.section {
+  padding: clamp(48px, 6vw, 96px) clamp(16px, 3vw, 24px);
+  background: var(--clr-bg);
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
 }
 
-/* ── Hero ─────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Hero / Heading ─────────────────────────────── */
 .hero {
   text-align: center;
-  margin-bottom: clamp(32px, 4vw, 56px);
+  margin-bottom: clamp(32px, 4vw, 52px);
 }
 
 .heroEyebrow {
@@ -22,19 +29,19 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: var(--clr-accent);
-  background: rgba(0, 229, 176, 0.07);
-  border: 1px solid rgba(0, 229, 176, 0.2);
-  border-radius: var(--radius-pill);
-  padding: 3px 12px;
+  background: rgba(0, 229, 176, 0.08);
+  border: 1px solid rgba(0, 229, 176, 0.22);
+  border-radius: var(--radius-pill, 999px);
+  padding: 4px 14px;
   margin-bottom: 12px;
 }
 
 .heroTitle {
-  font-size: clamp(1.9rem, 3.2vw + 0.4rem, 3rem);
+  font-size: clamp(1.8rem, 2.8vw + 0.4rem, 2.75rem);
   font-weight: 700;
   font-family: var(--font-display);
   color: var(--clr-text);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
@@ -42,7 +49,7 @@
 .heroSubtitle {
   font-size: clamp(14px, 0.9vw + 4px, 16px);
   color: var(--clr-text-muted);
-  max-width: 560px;
+  max-width: 580px;
   margin: 0 auto;
   line-height: 1.65;
 }
@@ -50,7 +57,7 @@
 /* ── Main Layout ─────────────────────── */
 .mainLayout {
   display: flex;
-  gap: 48px;
+  gap: clamp(24px, 3vw, 44px);
   align-items: flex-start;
 }
 
@@ -59,41 +66,42 @@
   flex: 58;
   background: var(--clr-surface-2);
   border: 1px solid var(--clr-border);
-  padding: 40px;
-  border-radius: var(--radius-lg);
+  padding: clamp(24px, 3.5vw, 38px);
+  border-radius: var(--radius-lg, 18px);
+  box-shadow: var(--shadow-card, 0 4px 20px rgba(0, 0, 0, 0.06));
 }
 
 .formHeading {
-  font-size: 22px;
+  font-size: clamp(18px, 1.4vw + 8px, 22px);
   font-weight: 700;
   font-family: var(--font-display);
   color: var(--clr-text);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .formSubheading {
-  font-size: 14px;
+  font-size: 13.5px;
   color: var(--clr-text-muted);
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   line-height: 1.5;
 }
 
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .formGroup {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .formLabel {
   display: block;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--clr-text);
-  margin-bottom: 8px;
+  margin-bottom: 7px;
   letter-spacing: 0.01em;
 }
 
@@ -101,15 +109,16 @@
 .formSelect,
 .formTextarea {
   width: 100%;
-  padding: 11px 16px;
+  padding: 10px 14px;
   border: 1px solid var(--clr-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm, 8px);
   background: var(--clr-surface-3);
   color: var(--clr-text);
-  font-size: 14px;
+  font-size: 13.5px;
   font-family: var(--font-body);
   outline: none;
   transition: border-color var(--transition), box-shadow var(--transition);
+  box-sizing: border-box;
 }
 
 .formInput::placeholder,
@@ -134,8 +143,14 @@
   padding-right: 36px;
 }
 
+[dir='rtl'] .formSelect {
+  background-position: left 14px center;
+  padding-right: 14px;
+  padding-left: 36px;
+}
+
 .formTextarea {
-  min-height: 160px;
+  min-height: 140px;
   resize: vertical;
 }
 
@@ -144,30 +159,31 @@
   flex: 42;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .infoCard {
   background: var(--clr-surface-2);
   border: 1px solid var(--clr-border);
-  padding: 28px;
-  border-radius: var(--radius-lg);
+  padding: clamp(20px, 2.5vw, 26px);
+  border-radius: var(--radius-lg, 18px);
+  box-shadow: var(--shadow-card, 0 4px 20px rgba(0, 0, 0, 0.06));
 }
 
 .infoCardTitle {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   font-family: var(--font-display);
   color: var(--clr-text);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .contactMethod {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  gap: 14px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
   border-bottom: 1px solid var(--clr-border);
 }
 
@@ -178,11 +194,11 @@
 }
 
 .contactIcon {
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   background: var(--clr-primary-dim);
   border: 1px solid rgba(124, 111, 255, 0.2);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-md, 10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -191,29 +207,29 @@
 }
 
 .contactLabel {
-  font-size: 11px;
+  font-size: 10.5px;
   font-family: var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--clr-text-dim);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .contactValue {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--clr-text);
   font-family: var(--font-display);
 }
 
-/* ── Map container ──────────────────── */
+/* ── Map Container ──────────────────── */
 .mapContainer {
   width: 100%;
-  min-height: 320px;
-  height: 340px;
+  min-height: 280px;
+  height: 310px;
   background: var(--clr-surface-2);
   border: 1px solid var(--clr-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg, 18px);
   overflow: hidden;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -225,7 +241,7 @@
     flex-direction: column;
   }
   .formColumn {
-    padding: 28px;
+    padding: 24px;
   }
   .formRow {
     grid-template-columns: 1fr;
@@ -233,8 +249,8 @@
 }
 
 @media (max-width: 768px) {
-  .contactPage {
-    padding: 32px 16px 48px;
+  .section {
+    padding: 40px 16px 56px;
   }
   .formColumn {
     padding: 20px;
