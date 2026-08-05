@@ -5,7 +5,7 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { DataTable } from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Search, Filter, Edit, Shield, Mail, Key, Loader, X } from 'lucide-react';
+import { Search, Filter, Edit, Shield, Mail, Key, Loader, X, Trash2, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function UsersClient({ initialUsers = [] }: { initialUsers: any[] }) {
@@ -16,6 +16,11 @@ export default function UsersClient({ initialUsers = [] }: { initialUsers: any[]
   
   const [editingUser, setEditingUser] = useState<any>(null);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // Delete confirmation state
+  const [deletingUser, setDeletingUser] = useState<any>(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleEdit = (user: any) => {
     setEditingUser(user);
@@ -66,6 +71,31 @@ export default function UsersClient({ initialUsers = [] }: { initialUsers: any[]
     }
   };
 
+  const handleDeleteUser = async () => {
+    if (!deletingUser || deleteConfirmText !== 'DELETE') return;
+    
+    try {
+      setIsDeleting(true);
+      const res = await fetch(`/api/users/${deletingUser.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (res.ok) {
+        setUsers(prev => prev.filter(u => u.id !== deletingUser.id));
+        setDeletingUser(null);
+        setDeleteConfirmText('');
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to delete user');
+      }
+    } catch (err) {
+      console.error('Failed to delete user', err);
+      alert('Failed to delete user');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const tableData = useMemo(() => {
     const filtered = users.filter((user) => {
         const matchesStatus = statusFilter === 'All' || (statusFilter === 'Active' ? user.isActive : !user.isActive);
@@ -106,6 +136,7 @@ export default function UsersClient({ initialUsers = [] }: { initialUsers: any[]
             <Button variant="ghost" size="sm" icon={<Mail size={14} />} title="Send Email" />
           </a>
           <Button variant="ghost" size="sm" icon={<Key size={14} color="#ffaa00" />} onClick={() => handlePasswordReset(user.id)} title="Reset Password" />
+          <Button variant="ghost" size="sm" icon={<Trash2 size={14} color="#ef4444" />} onClick={() => { setDeletingUser(user); setDeleteConfirmText(''); }} title="Delete User" />
         </div>
       ),
     }));
@@ -226,6 +257,79 @@ export default function UsersClient({ initialUsers = [] }: { initialUsers: any[]
                 <Button variant="primary" type="submit" disabled={isUpdating}>{isUpdating ? 'Saving...' : 'Save Changes'}</Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingUser && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'var(--clr-surface)', padding: '32px', borderRadius: '16px', width: '100%', maxWidth: '440px', position: 'relative' }}>
+            <Button variant="ghost" style={{ position: 'absolute', top: '16px', right: '16px' }} onClick={() => { setDeletingUser(null); setDeleteConfirmText(''); }} icon={<X size={16} />} />
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <AlertTriangle size={20} color="#ef4444" />
+              </div>
+              <h2 style={{ margin: 0, fontSize: '20px', color: '#ef4444' }}>Delete User</h2>
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: 'var(--clr-text)' }}>
+                You are about to permanently delete:
+              </p>
+              <div style={{ padding: '12px 16px', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.15)', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontWeight: 600, fontSize: '14px' }}>{deletingUser.name || 'Unknown User'}</p>
+                <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: 'var(--clr-text-muted)' }}>{deletingUser.email}</p>
+              </div>
+            </div>
+
+            <div style={{ padding: '12px 16px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', marginBottom: '20px' }}>
+              <p style={{ margin: 0, fontSize: '13px', color: '#dc2626', lineHeight: 1.5 }}>
+                <strong>⚠️ This action is irreversible.</strong> All data associated with this user — orders, sessions, and accounts — will be permanently deleted.
+              </p>
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: 'var(--clr-text-muted)' }}>
+                Type <strong style={{ color: '#ef4444' }}>DELETE</strong> to confirm
+              </label>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="DELETE"
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--clr-border)',
+                  background: 'var(--clr-surface-elevated)',
+                  color: 'var(--clr-text)',
+                  fontSize: '14px',
+                  outline: 'none',
+                  letterSpacing: '2px',
+                  fontWeight: 600,
+                }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <Button variant="ghost" onClick={() => { setDeletingUser(null); setDeleteConfirmText(''); }}>Cancel</Button>
+              <Button 
+                variant="primary" 
+                onClick={handleDeleteUser}
+                disabled={deleteConfirmText !== 'DELETE' || isDeleting}
+                style={{ 
+                  background: deleteConfirmText === 'DELETE' ? '#ef4444' : 'rgba(239, 68, 68, 0.3)', 
+                  borderColor: 'transparent',
+                  cursor: deleteConfirmText !== 'DELETE' ? 'not-allowed' : 'pointer' 
+                }}
+                icon={isDeleting ? <Loader size={16} className="spin" /> : <Trash2 size={16} />}
+              >
+                {isDeleting ? 'Deleting...' : 'Delete User'}
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -1,9 +1,7 @@
 import db from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { format } from 'date-fns';
-import Link from 'next/link';
-import Button from '@/components/ui/Button';
-import { ArrowLeft, Download } from 'lucide-react';
+import PreviewActions from './PreviewActions';
 
 export default async function PreviewTechSpecPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -20,14 +18,9 @@ export default async function PreviewTechSpecPage({ params }: { params: Promise<
 
   return (
     <div style={{ padding: '32px', maxWidth: '900px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-        <Link href="/admin/tech-specs">
-          <Button variant="ghost" icon={<ArrowLeft size={18} />}>Back to Specs</Button>
-        </Link>
-        <Button variant="secondary" icon={<Download size={16} />}>Print / Save PDF</Button>
-      </div>
+      <PreviewActions specId={spec.id} />
 
-      <div style={{ background: '#fff', color: '#1a1a2e', borderRadius: '16px', padding: '48px', boxShadow: '0 4px 32px rgba(0,0,0,0.1)' }}>
+      <div id="print-spec" style={{ background: '#fff', color: '#1a1a2e', borderRadius: '16px', padding: '48px', boxShadow: '0 4px 32px rgba(0,0,0,0.1)' }}>
         {/* Spec Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px', paddingBottom: '32px', borderBottom: '2px solid #eee' }}>
           <div style={{ fontSize: '12px', color: '#999', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>
@@ -111,6 +104,28 @@ export default async function PreviewTechSpecPage({ params }: { params: Promise<
           </div>
         </div>
       </div>
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .no-print {
+            display: none !important;
+          }
+          #print-spec, #print-spec * {
+            visibility: visible;
+          }
+          #print-spec {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            box-shadow: none !important;
+            border: none !important;
+          }
+        }
+      `}} />
     </div>
   );
 }

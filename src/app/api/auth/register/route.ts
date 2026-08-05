@@ -2,18 +2,43 @@ import { NextResponse } from 'next/server';
 import db from '@/lib/db';
 import { hashPassword } from '@/lib/auth/password';
 import { z } from 'zod';
+import { verifyRecaptcha, isDisposableEmail } from '@/lib/recaptcha';
 
 const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
+  name: z.string().min(2, 'Name must be at least 2 characters').max(100, 'Name is too long'),
   email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
   code: z.string().length(6, 'Verification code must be 6 digits'),
+  recaptchaToken: z.string().optional(),
 });
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, password, code } = registerSchema.parse(body);
+    const { name, email, password, code, recaptchaToken } = registerSchema.parse(body);
+
+    // --- Security: reCAPTCHA v3 verification ---
+    if (recaptchaToken) {
+      const captchaResult = await verifyRecaptcha(recaptchaToken);
+      if (!captchaResult.success) {
+        return NextResponse.json(
+          { error: 'Security verification failed. Please try again.' },
+          { status: 403 }
+        );
+      }
+    }
+
+    // --- Security: Block disposable email domains ---
+    if (isDisposableEmail(email)) {
+      return NextResponse.json(
+        { error: 'Disposable email addresses are not allowed. Please use a real email.' },
+        { status: 400 }
+      );
+    }
 
     // Verify code
     const tokenRecord = await db.verificationToken.findUnique({

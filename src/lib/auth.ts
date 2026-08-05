@@ -82,10 +82,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (!STAFF_ROLES.includes(user.role)) {
             throw new Error('Access denied. Admin portal requires elevated privileges.');
           }
-        } else if (loginType === 'client') {
-          if (user.role !== 'CLIENT' && user.role !== 'GUEST') {
-            throw new Error('Access denied. Please use the admin portal to log in.');
-          }
         }
 
         const isPasswordValid = await comparePassword(

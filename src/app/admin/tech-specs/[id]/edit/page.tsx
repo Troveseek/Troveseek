@@ -3,7 +3,7 @@
 import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
-import { ArrowLeft, Save, Plus, Trash2, GripVertical, Loader, CheckCircle2, Clock, Eye, XCircle, Send } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, GripVertical, Loader, CheckCircle2, Clock, Eye, XCircle, Send, FileText, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../../form.module.css';
 import TiptapEditor from '@/components/ui/TiptapEditor';
@@ -17,6 +17,7 @@ export default function EditTechSpecPage({ params }: { params: Promise<{ id: str
   const [activeTab, setActiveTab] = useState('general');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGeneratingInvoice, setIsGeneratingInvoice] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -160,6 +161,26 @@ export default function EditTechSpecPage({ params }: { params: Promise<{ id: str
     }
   };
 
+  const handleGenerateInvoice = async () => {
+    setIsGeneratingInvoice(true);
+    setError('');
+    try {
+      const res = await fetch(`/api/tech-specs/${id}/invoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate invoice');
+
+      router.push(`/admin/invoices/${data.invoiceId}`);
+    } catch (err: any) {
+      setError(err.message || 'Failed to create invoice');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } finally {
+      setIsGeneratingInvoice(false);
+    }
+  };
+
   const updateSection = (index: number, field: 'title' | 'content', value: string) => {
     setSections(prev => {
       const next = [...prev];
@@ -168,26 +189,50 @@ export default function EditTechSpecPage({ params }: { params: Promise<{ id: str
     });
   };
 
+  const addSection = () => {
+    setSections(prev => [...prev, { title: `Section ${prev.length + 1}`, content: '' }]);
+  };
+
+  const removeSection = (index: number) => {
+    setSections(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const moveSection = (from: number, to: number) => {
+    if (to < 0 || to >= sections.length) return;
+    setSections(prev => {
+      const next = [...prev];
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+  };
+
   if (isLoading) {
-    return <div style={{ padding: '48px', textAlign: 'center' }}><Loader className="spin" /></div>;
+    return (
+      <div className={styles.loadingContainer}>
+        <Loader className="spin" size={32} />
+        <p>Loading tech spec...</p>
+      </div>
+    );
   }
 
   const isEditable = status === 'DRAFT';
-  const tabs = [
-    { id: 'general', label: 'General' },
-    { id: 'sections', label: 'Document Sections' },
-    { id: 'tracking', label: 'Tracking & Signature' },
-    { id: 'payments', label: 'Payments & Installments' },
-  ];
 
   const statusColor: Record<string, string> = {
     DRAFT: '#888',
-    SENT: 'var(--clr-primary)',
+    SENT: '#3b82f6',
     VIEWED: '#f59e0b',
-    SIGNED: 'var(--clr-accent)',
-    EXPIRED: '#ff4444',
-    DECLINED: '#ff4444',
+    SIGNED: '#10b981',
+    EXPIRED: '#ef4444',
+    DECLINED: '#ef4444',
   };
+
+  const tabs = [
+    { id: 'general', label: 'General Info' },
+    { id: 'sections', label: `Sections (${sections.length})` },
+    { id: 'signature', label: 'Company Signature' },
+    { id: 'payments', label: `Payment Requests (${payments.length})` },
+  ];
 
   return (
     <div className={styles.formPage}>
@@ -201,7 +246,20 @@ export default function EditTechSpecPage({ params }: { params: Promise<{ id: str
             <p className={styles.subtitle}>Update specification details</p>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <Link href={`/admin/tech-specs/${id}/preview`} target="_blank">
+            <Button variant="secondary" icon={<Eye size={16} />}>Preview Doc</Button>
+          </Link>
+
+          <Button 
+            variant="secondary" 
+            icon={<FileText size={16} color="var(--clr-primary)" />} 
+            onClick={handleGenerateInvoice} 
+            disabled={isGeneratingInvoice}
+          >
+            {isGeneratingInvoice ? 'Creating Invoice...' : 'Generate Invoice'}
+          </Button>
+
           <Link href="/admin/tech-specs"><Button variant="secondary">Cancel</Button></Link>
           <Button variant="primary" icon={<Save size={16} />} onClick={handleSave} disabled={isSaving}>
             {isSaving ? 'Saving...' : 'Save Changes'}
@@ -508,6 +566,23 @@ export default function EditTechSpecPage({ params }: { params: Promise<{ id: str
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: statusColor[status] || '#888' }} />
               <span style={{ fontSize: '14px', fontWeight: 500 }}>{status}</span>
             </div>
+          </div>
+
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Official Invoice</h3>
+            <p style={{ fontSize: '12px', color: 'var(--clr-text-muted)', margin: '0 0 12px 0' }}>
+              Generate or access the formal client invoice for this technical specification.
+            </p>
+            <Button
+              variant="secondary"
+              size="sm"
+              style={{ width: '100%' }}
+              icon={<FileText size={14} color="var(--clr-primary)" />}
+              onClick={handleGenerateInvoice}
+              disabled={isGeneratingInvoice}
+            >
+              {isGeneratingInvoice ? 'Generating...' : 'Create / View Invoice'}
+            </Button>
           </div>
 
           {signatureToken && status !== 'DRAFT' && (

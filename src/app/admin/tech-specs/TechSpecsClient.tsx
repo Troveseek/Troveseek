@@ -5,8 +5,9 @@ import { Card, CardHeader } from '@/components/ui/Card';
 import { DataTable } from '@/components/ui/Table';
 import Button from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Plus, Search, Edit, Trash2, Send, Eye, Copy, Check } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Send, Eye, Copy, Check, FileText, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 
 const statusVariantMap: Record<string, 'default' | 'success' | 'warning' | 'danger' | 'blue'> = {
@@ -19,10 +20,12 @@ const statusVariantMap: Record<string, 'default' | 'success' | 'warning' | 'dang
 };
 
 export default function TechSpecsClient({ initialSpecs }: { initialSpecs: any[] }) {
+  const router = useRouter();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [data, setData] = useState(initialSpecs);
   const [sendingId, setSendingId] = useState<string | null>(null);
+  const [generatingInvoiceId, setGeneratingInvoiceId] = useState<string | null>(null);
   const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
   const handleDelete = useCallback(async (id: string, title: string) => {
@@ -61,6 +64,25 @@ export default function TechSpecsClient({ initialSpecs }: { initialSpecs: any[] 
     }
   }, []);
 
+  const handleGenerateInvoice = useCallback(async (id: string, specNumber: string) => {
+    setGeneratingInvoiceId(id);
+    try {
+      const res = await fetch(`/api/tech-specs/${id}/invoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Failed to generate invoice');
+
+      // Navigate directly to the generated invoice view
+      router.push(`/admin/invoices/${result.invoiceId}`);
+    } catch (err: any) {
+      alert(err.message || 'Error generating invoice');
+    } finally {
+      setGeneratingInvoiceId(null);
+    }
+  }, [router]);
+
   const formattedSpecs = useMemo(() => data.map(spec => ({
     _rawId: spec.id,
     _rawStatus: spec.status,
@@ -77,20 +99,32 @@ export default function TechSpecsClient({ initialSpecs }: { initialSpecs: any[] 
     created: format(new Date(spec.createdAt), 'MMM d, yyyy'),
     signed: spec.signedAt ? format(new Date(spec.signedAt), 'MMM d, yyyy') : '—',
     actions: (
-      <div style={{ display: 'flex', gap: '6px' }}>
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
         <Link href={`/admin/tech-specs/${spec.id}/preview`}>
-          <Button variant="ghost" size="sm" icon={<Eye size={14} />} />
+          <Button variant="ghost" size="sm" icon={<Eye size={14} />} title="Preview Document" />
         </Link>
         <Link href={`/admin/tech-specs/${spec.id}/edit`}>
-          <Button variant="ghost" size="sm" icon={<Edit size={14} />} />
+          <Button variant="ghost" size="sm" icon={<Edit size={14} />} title="Edit Spec & Installments" />
         </Link>
+
+        {/* Generate Invoice Action */}
+        <Button
+          variant="ghost"
+          size="sm"
+          icon={generatingInvoiceId === spec.id ? <Loader2 size={14} className="spin" /> : <FileText size={14} color="var(--clr-primary)" />}
+          onClick={() => handleGenerateInvoice(spec.id, spec.specNumber)}
+          disabled={generatingInvoiceId === spec.id}
+          title="Generate Official Invoice"
+        />
+
         {spec.status === 'DRAFT' && (
           <Button
             variant="ghost"
             size="sm"
-            icon={sendingId === spec.id ? <span className="spin" style={{ display: 'inline-block' }}>⏳</span> : <Send size={14} />}
+            icon={sendingId === spec.id ? <Loader2 size={14} className="spin" /> : <Send size={14} />}
             onClick={() => handleSend(spec.id)}
             disabled={sendingId === spec.id}
+            title="Send to Client for Signature"
           />
         )}
         {spec.status !== 'DRAFT' && (
@@ -104,6 +138,7 @@ export default function TechSpecsClient({ initialSpecs }: { initialSpecs: any[] 
               setCopiedUrl(spec.id);
               setTimeout(() => setCopiedUrl(null), 2000);
             }}
+            title="Copy Client Signing Link"
           />
         )}
         <Button
@@ -111,10 +146,11 @@ export default function TechSpecsClient({ initialSpecs }: { initialSpecs: any[] 
           size="sm"
           icon={<Trash2 size={14} color="#ff4444" />}
           onClick={() => handleDelete(spec.id, spec.title)}
+          title="Delete Tech Spec"
         />
       </div>
     ),
-  })), [data, handleDelete, handleSend, sendingId, copiedUrl]);
+  })), [data, handleDelete, handleSend, handleGenerateInvoice, sendingId, generatingInvoiceId, copiedUrl]);
 
   const filteredSpecs = useMemo(() => {
     return formattedSpecs.filter(spec => {
@@ -131,7 +167,7 @@ export default function TechSpecsClient({ initialSpecs }: { initialSpecs: any[] 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ fontSize: '28px', fontFamily: 'var(--font-display)', margin: 0, color: 'var(--clr-text)' }}>Tech Specs & E-Signatures</h1>
-          <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px', marginTop: '4px' }}>Create, send, and manage technical specification documents</p>
+          <p style={{ color: 'var(--clr-text-muted)', fontSize: '14px', marginTop: '4px' }}>Create, send, manage technical specifications, and generate client invoices</p>
         </div>
         <Link href="/admin/tech-specs/new"><Button variant="primary" icon={<Plus size={16} />}>Create New Spec</Button></Link>
       </div>

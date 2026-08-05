@@ -2,15 +2,36 @@ import { NextResponse } from 'next/server';
 import db from '@/lib/db';
 import { z } from 'zod';
 import { sendEmail } from '@/lib/email';
+import { verifyRecaptcha, isDisposableEmail } from '@/lib/recaptcha';
 
 const schema = z.object({
   email: z.string().email('Invalid email address'),
+  recaptchaToken: z.string().optional(),
 });
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email } = schema.parse(body);
+    const { email, recaptchaToken } = schema.parse(body);
+
+    // --- Security: reCAPTCHA v3 verification ---
+    if (recaptchaToken) {
+      const captchaResult = await verifyRecaptcha(recaptchaToken);
+      if (!captchaResult.success) {
+        return NextResponse.json(
+          { error: 'Security verification failed. Please try again.' },
+          { status: 403 }
+        );
+      }
+    }
+
+    // --- Security: Block disposable/temporary email domains ---
+    if (isDisposableEmail(email)) {
+      return NextResponse.json(
+        { error: 'Disposable email addresses are not allowed. Please use a real email.' },
+        { status: 400 }
+      );
+    }
 
     // Check if user already exists
     const existingUser = await db.user.findUnique({

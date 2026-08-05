@@ -13,10 +13,21 @@ export default async function AdminDashboard() {
   // Fetch real data
   const usersCount = await db.user.count();
   const ordersCount = await db.order.count();
-  const totalRevenueData = await db.order.aggregate({
-    _sum: { totalAmount: true },
-    where: { status: { not: 'CANCELLED' } }
-  });
+  // Aggregate revenue from Orders, SaaS Subscriptions, and Service Payments (Tech Specs)
+  const [ordersRev, subsRev, servicesRev] = await Promise.all([
+    db.order.aggregate({
+      _sum: { totalAmount: true },
+      where: { paymentStatus: 'PAID' }
+    }),
+    db.subscription.aggregate({
+      _sum: { price: true },
+      where: { status: 'ACTIVE' }
+    }),
+    db.servicePayment.aggregate({
+      _sum: { amount: true },
+      where: { status: 'PAID' }
+    })
+  ]);
 
   const currencySetting = await db.siteSetting.findUnique({ where: { key: 'site_currency' } });
   const siteCurrency = currencySetting?.value || 'USD';
@@ -33,7 +44,7 @@ export default async function AdminDashboard() {
     include: { user: true }
   });
 
-  const totalRevenue = totalRevenueData._sum.totalAmount || 0;
+  const totalRevenue = (ordersRev._sum.totalAmount || 0) + (subsRev._sum.price || 0) + (servicesRev._sum.amount || 0);
 
   // Daily revenue + signups for last 7 days
   const now = new Date();
@@ -50,14 +61,26 @@ export default async function AdminDashboard() {
       const end = new Date(day);
       end.setHours(23, 59, 59, 999);
       
-      const revResult = await db.order.aggregate({
-        _sum: { totalAmount: true },
-        where: { paymentStatus: 'PAID', createdAt: { gte: start, lte: end } }
-      });
+      const [revOrder, revSub, revService] = await Promise.all([
+        db.order.aggregate({
+          _sum: { totalAmount: true },
+          where: { paymentStatus: 'PAID', createdAt: { gte: start, lte: end } }
+        }),
+        db.subscription.aggregate({
+          _sum: { price: true },
+          where: { status: 'ACTIVE', createdAt: { gte: start, lte: end } }
+        }),
+        db.servicePayment.aggregate({
+          _sum: { amount: true },
+          where: { status: 'PAID', createdAt: { gte: start, lte: end } }
+        })
+      ]);
       
+      const dayTotal = (revOrder._sum.totalAmount || 0) + (revSub._sum.price || 0) + (revService._sum.amount || 0);
+
       return {
         name: day.toLocaleDateString('en-US', { weekday: 'short' }),
-        revenue: revResult._sum.totalAmount || 0,
+        revenue: dayTotal,
       };
     })
   );
